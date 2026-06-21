@@ -13,24 +13,24 @@
       --display: "Cormorant Garamond", Georgia, serif;
       --body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: "Courier New", Consolas, monospace;
-      --bg-0: #141d1b;
-      --bg-1: #1d2b27;
-      --panel: rgba(29, 42, 38, 0.84);
-      --panel-strong: rgba(24, 36, 33, 0.94);
-      --panel-soft: rgba(58, 77, 69, 0.34);
-      --line: rgba(180, 196, 174, 0.24);
-      --line-strong: rgba(174, 196, 179, 0.38);
-      --text: #f4eddd;
-      --muted: #aebeb8;
-      --accent: #93bca9;
-      --accent-strong: #bdd6c8;
+      --bg-0: #efe5cf;
+      --bg-1: #d8ccb0;
+      --panel: rgba(251, 245, 231, 0.9);
+      --panel-strong: rgba(249, 242, 224, 0.96);
+      --panel-soft: rgba(226, 216, 191, 0.5);
+      --line: rgba(91, 111, 92, 0.2);
+      --line-strong: rgba(75, 98, 82, 0.34);
+      --text: #21352f;
+      --muted: #63736b;
+      --accent: #718e77;
+      --accent-strong: #365e52;
       --cream: #fbf5e7;
-      --risk-low: #5faf8c;
-      --risk-medium: #d7a34a;
-      --risk-high: #c86c43;
-      --risk-critical: #d85f58;
-      --radius: 10px;
-      --radius-small: 7px;
+      --risk-low: #2f9d74;
+      --risk-medium: #c9901e;
+      --risk-high: #c65d31;
+      --risk-critical: #d24f4b;
+      --radius: 14px;
+      --radius-small: 9px;
     }
 
     * {
@@ -42,11 +42,26 @@
     body {
       font-family: var(--body);
       background:
-        radial-gradient(circle at 8% 10%, rgba(122, 143, 111, 0.16), transparent 28rem),
+        radial-gradient(circle at 10% 7%, rgba(255, 250, 235, 0.75), transparent 28rem),
+        radial-gradient(circle at 86% 92%, rgba(123, 146, 105, 0.25), transparent 26rem),
         linear-gradient(135deg, var(--bg-0) 0%, var(--bg-1) 100%);
       color: var(--text);
       overflow: hidden;
       height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background-image:
+        linear-gradient(90deg, rgba(67, 51, 31, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(67, 51, 31, 0.04) 1px, transparent 1px);
+      background-size: 22px 22px, 26px 26px;
+      mix-blend-mode: multiply;
+      z-index: 0;
     }
 
     .mono {
@@ -60,17 +75,17 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 80px;
-      background: rgba(21, 31, 28, 0.9);
+      height: 88px;
+      background: rgba(250, 244, 229, 0.88);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line-strong);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 30px;
-      padding: 0 34px;
+      padding: 0 38px;
       z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+      box-shadow: 0 12px 30px rgba(82, 68, 43, 0.13);
     }
 
     .archive-eyebrow {
@@ -92,7 +107,7 @@
       width: 34px;
       height: 1px;
       flex: 0 0 auto;
-      background: rgba(189, 214, 200, 0.62);
+      background: rgba(54, 94, 82, 0.48);
     }
 
     .kpi-item {
@@ -120,16 +135,16 @@
     #priority-panel {
       position: fixed;
       left: 20px;
-      top: 100px;
+      top: 108px;
       width: 320px;
       background: var(--panel);
       backdrop-filter: blur(16px);
       border-radius: var(--radius);
       border: 1px solid var(--line);
-      padding: 22px;
+      padding: 24px;
       z-index: 999;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
-      max-height: calc(100vh - 140px);
+      box-shadow: 0 18px 42px rgba(82, 68, 43, 0.16);
+      max-height: calc(100vh - 148px);
       overflow-y: auto;
     }
 
@@ -148,15 +163,15 @@
     .priority-item {
       background: var(--panel-soft);
       border-left: 3px solid var(--risk-critical);
-      padding: 13px;
-      margin-bottom: 11px;
+      padding: 14px;
+      margin-bottom: 12px;
       border-radius: var(--radius-small);
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .priority-item:hover {
-      background: rgba(71, 91, 82, 0.42);
+      background: rgba(215, 203, 176, 0.68);
       transform: translateX(4px);
     }
 
@@ -182,14 +197,14 @@
     #map-container {
       position: fixed;
       left: 360px;
-      top: 100px;
-      right: 20px;
-      bottom: 20px;
+      top: 108px;
+      right: 24px;
+      bottom: 24px;
       z-index: 1;
     }
 
     #map-container.expanded {
-      right: 20px;
+      right: 24px;
     }
 
     #map-container.with-detail {
@@ -201,29 +216,29 @@
       height: 100%;
       border-radius: var(--radius);
       border: 1px solid var(--line);
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.46);
+      box-shadow: 0 18px 42px rgba(82, 68, 43, 0.18);
     }
 
     /* Detail Panel (right) */
     #detail-panel {
       position: fixed;
       right: -400px;
-      top: 100px;
+      top: 108px;
       width: 380px;
       background: var(--panel);
       backdrop-filter: blur(16px);
       border-radius: var(--radius);
       border: 1px solid var(--line);
-      padding: 24px;
+      padding: 26px;
       z-index: 999;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.46);
-      max-height: calc(100vh - 140px);
+      box-shadow: 0 18px 42px rgba(82, 68, 43, 0.18);
+      max-height: calc(100vh - 148px);
       overflow-y: auto;
       transition: right 0.3s ease;
     }
 
     #detail-panel.open {
-      right: 20px;
+      right: 24px;
     }
 
     .detail-close {
@@ -299,7 +314,7 @@
 
     .factor-track {
       height: 8px;
-      background: rgba(18, 25, 23, 0.6);
+      background: rgba(82, 68, 43, 0.14);
       border-radius: 4px;
       overflow: hidden;
       position: relative;
@@ -336,7 +351,7 @@
     /* Action Plan Button */
     .action-plan-button {
       width: 100%;
-      background: #354f45;
+      background: #385e52;
       border: 1px solid var(--line-strong);
       color: var(--cream);
       padding: 14px 20px;
@@ -352,13 +367,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+      box-shadow: 0 10px 22px rgba(82, 68, 43, 0.16);
     }
 
     .action-plan-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
-      background: #416154;
+      box-shadow: 0 12px 24px rgba(82, 68, 43, 0.22);
+      background: #416b5d;
     }
 
     .action-plan-button:active {
@@ -496,6 +511,21 @@
       }
     }
 
+    /* Pipe Glow Effect for Critical Pipes */
+    .pipe-critical {
+      filter: drop-shadow(0 0 4px #E24B4A) drop-shadow(0 0 8px #E24B4A);
+    }
+
+    .pipe-critical:hover {
+      filter: drop-shadow(0 0 6px #E24B4A) drop-shadow(0 0 12px #E24B4A) drop-shadow(0 0 18px #E24B4A);
+    }
+
+    /* Pipe hover brightening */
+    .pipe-hover {
+      filter: brightness(1.3);
+      transition: filter 0.2s ease;
+    }
+
     /* Error Message */
     #error-message {
       position: fixed;
@@ -510,7 +540,7 @@
       text-align: center;
       z-index: 10000;
       display: none;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 12px 34px rgba(82, 68, 43, 0.24);
     }
 
     /* Loading */
@@ -526,7 +556,7 @@
 
     /* Leaflet Customization */
     .leaflet-container {
-      background: var(--bg-0);
+      background: #d8ccb0;
     }
 
     .pulse {
@@ -556,7 +586,7 @@
       border: 1px solid var(--line-strong);
       font-size: 12px;
       z-index: 1000;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 24px rgba(82, 68, 43, 0.17);
     }
 
     .legend-title {
@@ -614,7 +644,7 @@
       padding: 6px 10px;
       font-size: 12px;
       font-weight: 500;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 18px rgba(82, 68, 43, 0.16);
     }
 
     .leaflet-tooltip.zone-tooltip::before {
@@ -627,12 +657,12 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(18, 25, 23, 0.42);
+      background: rgba(82, 68, 43, 0.1);
       border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(147, 188, 169, 0.52);
+      background: rgba(113, 142, 119, 0.52);
       border-radius: 4px;
     }
 
@@ -675,19 +705,19 @@
     <div class="map-legend">
       <div class="legend-title">Risk Levels</div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #5faf8c;"></div>
+        <div class="legend-color" style="background: #2f9d74;"></div>
         <div class="legend-label">Low (0-30)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #d7a34a;"></div>
+        <div class="legend-color" style="background: #c9901e;"></div>
         <div class="legend-label">Medium (31-60)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #c86c43;"></div>
+        <div class="legend-color" style="background: #c65d31;"></div>
         <div class="legend-label">High (61-80)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #d85f58;"></div>
+        <div class="legend-color" style="background: #d24f4b;"></div>
         <div class="legend-label">Critical (81-100)</div>
       </div>
     </div>
@@ -782,9 +812,13 @@
   <script>
     let map;
     let zonesData = null;
+    let pipesData = null;
     let markers = {};
+    let pipeLines = {};
     let selectedZone = null;
+    let selectedPipe = null;
     let config = null;
+    let usingPipes = false;
 
     // Load config on startup
     async function loadConfig() {
@@ -800,10 +834,10 @@
 
     // Risk color mapping
     function getRiskColor(risk) {
-      if (risk >= 81) return '#d85f58'; // Critical - hydrant red
-      if (risk >= 61) return '#c86c43'; // High - orange
-      if (risk >= 31) return '#d7a34a'; // Medium - amber
-      return '#5faf8c'; // Low - teal
+      if (risk >= 81) return '#d24f4b'; // Critical - hydrant red
+      if (risk >= 61) return '#c65d31'; // High - orange
+      if (risk >= 31) return '#c9901e'; // Medium - amber
+      return '#2f9d74'; // Low - teal
     }
 
     // Map lat/lon to Kitchener neighborhood names with granular boundaries
@@ -940,7 +974,7 @@
       btn.disabled = true;
       btn.classList.add('loading');
       btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generating Plan...';
-      contentDiv.innerHTML = '<div style="text-align: center; color: #aebeb8; padding: 20px;">Analyzing zone data and generating operational plan...</div>';
+      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing zone data and generating operational plan...</div>';
       outputDiv.style.display = 'block';
 
       try {
@@ -1243,8 +1277,48 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       fetchSimilarBreaks(zone);
     }
 
-    // Load and render zones
-    async function loadZones() {
+    // Load pipes (with fallback to zones)
+    async function loadData() {
+      // Try to load pipes.json first
+      try {
+        console.log('🔍 Attempting to fetch pipes.json...');
+        const response = await fetch('pipes.json');
+        console.log('📡 pipes.json response status:', response.status, response.ok);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('📦 pipes.json data:', data);
+
+          if (data.pipes && Array.isArray(data.pipes)) {
+            pipesData = data;
+            usingPipes = true;
+            console.log('✅ Successfully loaded pipes.json:', data.pipes.length, 'pipe segments');
+            console.log('🎨 Will render POLYLINES, not circles');
+
+            // Still load zones for KPI calculation
+            try {
+              const zonesResponse = await fetch('zones.json');
+              if (zonesResponse.ok) {
+                zonesData = await zonesResponse.json();
+                console.log('📊 Also loaded zones.json for KPI calculation');
+              }
+            } catch (e) {
+              console.warn('Could not load zones.json for KPIs, will calculate from pipes');
+            }
+
+            renderDashboard();
+            return;
+          } else {
+            console.error('❌ pipes.json has wrong format - missing pipes array');
+          }
+        } else {
+          console.error('❌ Failed to fetch pipes.json - HTTP', response.status);
+        }
+      } catch (error) {
+        console.error('❌ Could not load pipes.json, falling back to zones:', error);
+      }
+
+      // Fallback to zones.json
       try {
         const response = await fetch('zones.json');
         if (!response.ok) {
@@ -1257,24 +1331,202 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         }
 
         zonesData = data;
+        usingPipes = false;
+        console.log('Loaded zones.json:', data.zones.length, 'zones');
         renderDashboard();
 
       } catch (error) {
-        showError(`ERROR: ${error.message}\n\nEnsure zones.json exists in the same directory as index.html.`);
-        console.error('Failed to load zones:', error);
+        showError(`ERROR: ${error.message}\n\nEnsure zones.json or pipes.json exists in the same directory as index.html.`);
+        console.error('Failed to load data:', error);
       }
     }
 
     // Render dashboard
     function renderDashboard() {
+      document.getElementById('loading').style.display = 'none';
+
+      if (usingPipes) {
+        console.log('🚀 Rendering PIPE dashboard (polylines)');
+        renderPipeDashboard();
+      } else {
+        console.log('🚀 Rendering ZONE dashboard (circle markers - FALLBACK ONLY)');
+        renderZoneDashboard();
+      }
+    }
+
+    // Render dashboard with pipe network
+    function renderPipeDashboard() {
+      const pipes = pipesData.pipes;
+
+      if (pipes.length === 0) {
+        showError('ERROR: pipes.json contains no pipes');
+        return;
+      }
+
+      // Calculate KPIs from zones if available, otherwise from pipes
+      let totalZones, criticalZones, totalBreaks, totalSegments;
+      if (zonesData && zonesData.zones) {
+        const zones = zonesData.zones;
+        totalZones = zones.length;
+        criticalZones = zones.filter(z => z.risk >= 81).length;
+        totalBreaks = zones.reduce((sum, z) => sum + z.breaks, 0);
+        totalSegments = zones.reduce((sum, z) => sum + z.segments, 0);
+      } else {
+        // Calculate from pipes
+        totalZones = 0; // No zones
+        criticalZones = pipes.filter(p => p.risk >= 81).length;
+        totalBreaks = 0; // Unknown
+        totalSegments = pipes.length;
+      }
+
+      // Animate KPIs
+      animateValue('kpi-zones', 0, totalZones, 1200);
+      animateValue('kpi-critical', 0, criticalZones, 1200);
+      animateValue('kpi-breaks', 0, totalBreaks, 1500);
+      animateValue('kpi-segments', 0, totalSegments, 1500);
+
+      // Initialize map using bbox from pipes.json
+      const bbox = pipesData.bbox;
+      const centerLat = (bbox.lat_min + bbox.lat_max) / 2;
+      const centerLon = (bbox.lon_min + bbox.lon_max) / 2;
+
+      console.log('🗺️  Initializing map with Canvas renderer for', pipes.length, 'polylines');
+      map = L.map('map', { preferCanvas: true }).setView([centerLat, centerLon], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        className: 'map-tiles'
+      }).addTo(map);
+
+      // Add pipe polylines (LINES, not circles!)
+      const bounds = [];
+      console.log('🎨 Rendering', pipes.length, 'pipe segments as POLYLINES');
+
+      pipes.forEach((pipe, idx) => {
+        const color = getRiskColor(pipe.risk);
+
+        // Calculate line weight: thicker for critical pipes, scale by diameter
+        let weight = 3; // Base weight (visible on all zooms)
+
+        if (pipe.risk >= 81) {
+          weight = 6; // Critical pipes - very thick + glowing
+        } else if (pipe.risk >= 61) {
+          weight = 5; // High risk - thick
+        } else if (pipe.risk >= 31) {
+          weight = 4; // Medium risk
+        }
+
+        // Further scale by diameter if available
+        if (pipe.diameter && pipe.diameter > 0) {
+          weight = Math.max(weight, 2 + Math.min(pipe.diameter / 100, 5));
+        }
+
+        // Convert coordinates to Leaflet format [lat, lon]
+        const latLngs = pipe.coordinates.map(coord => [coord[1], coord[0]]);
+
+        const polyline = L.polyline(latLngs, {
+          color: color,
+          weight: weight,
+          opacity: 0.9, // More opaque for visibility
+          lineJoin: 'round',
+          lineCap: 'round',
+          className: pipe.risk >= 81 ? 'pipe-critical' : '',
+          pipeData: pipe
+        }).addTo(map);
+
+        // Log first few for debugging
+        if (idx < 3) {
+          console.log(`  Pipe ${pipe.id}: risk=${pipe.risk}, weight=${weight}, color=${color}, coords=${latLngs.length} points`);
+        }
+
+        // Store original style
+        polyline.originalWeight = weight;
+        polyline.originalOpacity = 0.9;
+
+        // Hover effect - brighten and thicken
+        polyline.on('mouseover', function(e) {
+          this.setStyle({
+            weight: this.originalWeight + 2,
+            opacity: 1
+          });
+          this._path.classList.add('pipe-hover');
+        });
+
+        polyline.on('mouseout', function(e) {
+          // Don't reset if this is the selected pipe
+          if (!selectedPipe || selectedPipe.id !== pipe.id) {
+            this.setStyle({
+              weight: this.originalWeight,
+              opacity: this.originalOpacity
+            });
+            this._path.classList.remove('pipe-hover');
+          }
+        });
+
+        // Click to show details
+        polyline.on('click', () => {
+          showPipeDetail(pipe);
+        });
+
+        // Tooltip on hover
+        const materialStr = pipe.material ? ` (${pipe.material})` : '';
+        polyline.bindTooltip(`Risk ${pipe.risk}${materialStr}`, {
+          permanent: false,
+          direction: 'top',
+          className: 'zone-tooltip',
+          sticky: true
+        });
+
+        pipeLines[pipe.id] = polyline;
+
+        // Add all coordinates to bounds
+        latLngs.forEach(coord => bounds.push(coord));
+      });
+
+      // Fit map to pipe network
+      if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+
+      console.log('✅ Rendered', Object.keys(pipeLines).length, 'polylines on map');
+      console.log('🎯 You should see LINES (polylines), NOT dots/circles');
+      console.log('📍 Bounds:', bounds.length, 'coordinate points');
+
+      // Render priority list (top 5 pipes by risk)
+      const topPipes = [...pipes].sort((a, b) => b.risk - a.risk).slice(0, 5);
+      const priorityList = document.getElementById('priority-list');
+      priorityList.innerHTML = '';
+
+      topPipes.forEach((pipe, idx) => {
+        const materialStr = pipe.material ? ` • ${pipe.material}` : '';
+        const item = document.createElement('div');
+        item.className = 'priority-item';
+        item.innerHTML = `
+          <div class="priority-rank">#${idx + 1} Priority</div>
+          <div class="priority-zone">${pipe.id}${materialStr}</div>
+          <div class="zone-coord-subtitle" style="margin-bottom: 6px;">Age: ${pipe.age} yrs</div>
+          <div class="priority-risk mono">${pipe.risk}</div>
+        `;
+        item.onclick = () => showPipeDetail(pipe);
+        priorityList.appendChild(item);
+      });
+
+      // Add click handler for action plan button
+      document.getElementById('action-plan-btn').onclick = () => {
+        if (selectedPipe) {
+          generatePipeActionPlan(selectedPipe);
+        }
+      };
+    }
+
+    // Render dashboard with zone dots (fallback)
+    function renderZoneDashboard() {
       const zones = zonesData.zones;
 
       if (zones.length === 0) {
         showError('ERROR: zones.json contains no zones');
         return;
       }
-
-      document.getElementById('loading').style.display = 'none';
 
       // Calculate KPIs
       const totalZones = zones.length;
@@ -1331,10 +1583,10 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         // Popup on click
         marker.bindPopup(`
           <div style="font-size: 12px;">
-            <div style="color: #f4eddd; margin-bottom: 2px; font-weight: bold;">${neighborhood}</div>
-            <div style="color: #aebeb8; font-size: 10px; margin-bottom: 6px;">${zone.id}</div>
+            <div style="color: #21352f; margin-bottom: 2px; font-weight: bold;">${neighborhood}</div>
+            <div style="color: #63736b; font-size: 10px; margin-bottom: 6px;">${zone.id}</div>
             <div style="font-size: 18px; color: ${color}; font-weight: bold;" class="mono">${zone.risk}</div>
-            <div style="color: #aebeb8; font-size: 10px;">Risk Score</div>
+            <div style="color: #63736b; font-size: 10px;">Risk Score</div>
           </div>
         `);
 
@@ -1374,10 +1626,158 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       };
     }
 
+    // Show pipe detail panel
+    function showPipeDetail(pipe) {
+      selectedPipe = pipe;
+
+      // Update detail panel
+      const materialStr = pipe.material ? ` (${pipe.material})` : '';
+      const diameterStr = pipe.diameter ? ` • Ø${pipe.diameter}mm` : '';
+
+      document.getElementById('detail-zone-id').innerHTML = `${pipe.id}<div class="zone-coord-subtitle">Age: ${pipe.age} yrs${diameterStr}</div>`;
+      document.getElementById('detail-risk-score').textContent = pipe.risk;
+      document.getElementById('detail-risk-score').style.color = getRiskColor(pipe.risk);
+
+      // For pipes, we don't have full factor breakdown, so estimate from risk and age
+      // This is simplified - just for visual display
+      const ageFactor = Math.min(Math.round(pipe.age * 0.8), 35);
+      const materialFactor = Math.round(pipe.risk * 0.25);
+      const historyFactor = Math.round(pipe.risk * 0.25);
+      const floodFactor = 20;
+
+      document.getElementById('factor-age-val').textContent = ageFactor;
+      document.getElementById('factor-material-val').textContent = materialFactor;
+      document.getElementById('factor-history-val').textContent = historyFactor;
+      document.getElementById('factor-flood-val').textContent = floodFactor;
+
+      // Animate factor bars
+      setTimeout(() => {
+        document.getElementById('factor-age-fill').style.width = ageFactor + '%';
+        document.getElementById('factor-material-fill').style.width = materialFactor + '%';
+        document.getElementById('factor-history-fill').style.width = historyFactor + '%';
+        document.getElementById('factor-flood-fill').style.width = floodFactor + '%';
+      }, 50);
+
+      // Update stats (for pipes, we don't have segments/breaks data)
+      document.getElementById('detail-breaks').textContent = '—';
+      document.getElementById('detail-segments').textContent = '1';
+
+      // Show panel
+      document.getElementById('detail-panel').classList.add('open');
+      document.getElementById('map-container').classList.remove('expanded');
+      document.getElementById('map-container').classList.add('with-detail');
+
+      // Highlight selected pipe
+      Object.values(pipeLines).forEach(line => {
+        const p = line.options.pipeData;
+        if (p.id === pipe.id) {
+          line.setStyle({ weight: line.originalWeight + 3, opacity: 1 });
+          line._path.classList.add('pipe-hover');
+        } else {
+          line.setStyle({ weight: line.originalWeight, opacity: line.originalOpacity });
+          line._path.classList.remove('pipe-hover');
+        }
+      });
+
+      // Pan to pipe (center of its coordinates)
+      const coords = pipe.coordinates;
+      const centerLat = coords.reduce((sum, c) => sum + c[1], 0) / coords.length;
+      const centerLon = coords.reduce((sum, c) => sum + c[0], 0) / coords.length;
+
+      const currentZoom = map.getZoom();
+      const targetZoom = currentZoom < 15 ? 15 : currentZoom;
+      map.setView([centerLat, centerLon], targetZoom, {
+        animate: true,
+        duration: 0.5
+      });
+
+      // Hide similar breaks section for pipes (not applicable)
+      document.getElementById('similar-breaks-section').style.display = 'none';
+    }
+
+    // Generate action plan for a pipe
+    async function generatePipeActionPlan(pipe) {
+      const btn = document.getElementById('action-plan-btn');
+      const outputDiv = document.getElementById('action-plan-output');
+      const contentDiv = document.getElementById('action-plan-content');
+
+      // Check for API key
+      if (!config || !config.anthropicApiKey || config.anthropicApiKey === 'YOUR_ANTHROPIC_API_KEY_HERE') {
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ API key not configured. Please add your Anthropic API key to config.json</div>`;
+        outputDiv.style.display = 'block';
+        return;
+      }
+
+      // Show loading state
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generating Plan...';
+      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing pipe data and generating operational plan...</div>';
+      outputDiv.style.display = 'block';
+
+      try {
+        const materialStr = pipe.material ? pipe.material : 'Unknown';
+        const diameterStr = pipe.diameter ? `${pipe.diameter}mm` : 'Unknown';
+
+        // Prepare the prompt
+        const prompt = `You are a municipal water infrastructure operations expert. Generate a detailed 72-hour operational action plan for the following high-risk water main pipe:
+
+Pipe ID: ${pipe.id}
+Risk Score: ${pipe.risk}/100
+Age: ${pipe.age} years
+Material: ${materialStr}
+Diameter: ${diameterStr}
+
+Generate a structured action plan with THREE sections:
+1. IMMEDIATE ACTIONS (0-24 hours) - urgent inspections, crew deployment, monitoring
+2. 72-HOUR ACTIONS (24-72 hours) - detailed assessments, preventive measures, resource allocation
+3. LONG-TERM ACTIONS (1-6 months) - infrastructure upgrades, replacement planning, monitoring systems
+
+Format each section as a bulleted list with specific, actionable items. Be concise and operational.`;
+
+        // Call Claude API
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': config.anthropicApiKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 1024,
+            messages: [{
+              role: 'user',
+              content: prompt
+            }]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const planText = data.content[0].text;
+
+        // Parse and render the plan
+        renderActionPlan(planText, contentDiv);
+
+      } catch (error) {
+        console.error('Action plan generation failed:', error);
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
+      } finally {
+        // Reset button
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generate Action Plan';
+      }
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
       await loadConfig();
-      loadZones();
+      loadData();
     });
   </script>
 </body>

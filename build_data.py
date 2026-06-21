@@ -223,6 +223,85 @@ def main():
     except ImportError:
         print("   scikit-learn not installed — skipping model. The transparent score is unaffected.")
 
+    # --- EXPORT INDIVIDUAL PIPES (for line-based map visualization) ---
+    print("\n" + "=" * 60)
+    print("EXPORTING INDIVIDUAL PIPE SEGMENTS (pipes.json)")
+    print("=" * 60)
+    pipes = []
+    for idx, row in mains.iterrows():  # use mains (4326) for export coordinates
+        geom = row.geometry
+        if geom is None or geom.is_empty:
+            continue
+
+        # Extract coordinates from LineString geometry
+        if geom.geom_type == "LineString":
+            coords = [[round(x, 6), round(y, 6)] for x, y in geom.coords]
+        elif geom.geom_type == "MultiLineString":
+            # If it's a MultiLineString, take the first/longest segment
+            coords = [[round(x, 6), round(y, 6)] for x, y in max(geom.geoms, key=lambda g: g.length).coords]
+        else:
+            continue
+
+        # Get risk score and other attributes from mains_m (metric CRS version has the scores)
+        risk_score = int(mains_m.loc[idx, "risk"]) if idx in mains_m.index else 50
+        age_val = int(mains_m.loc[idx, "age"]) if idx in mains_m.index else 60
+
+        # Get diameter if available
+        dia_val = None
+        if fld_dia and fld_dia in row:
+            try:
+                dia_val = float(row[fld_dia])
+            except:
+                pass
+
+        # Get material if available
+        mat_val = None
+        if fld_mat and fld_mat in row:
+            mat_val = str(row[fld_mat]) if row[fld_mat] else None
+
+        pipes.append({
+            "id": f"pipe_{idx}",
+            "coordinates": coords,
+            "risk": risk_score,
+            "diameter": dia_val,
+            "material": mat_val,
+            "age": age_val
+        })
+
+    # Compute bounding box for pipes
+    if pipes:
+        all_coords = [coord for pipe in pipes for coord in pipe["coordinates"]]
+        lons = [c[0] for c in all_coords]
+        lats = [c[1] for c in all_coords]
+        pipes_bbox = {
+            "lon_min": round(min(lons), 3),
+            "lon_max": round(max(lons), 3),
+            "lat_min": round(min(lats), 3),
+            "lat_max": round(max(lats), 3)
+        }
+        print(f"  Exported {len(pipes)} pipe segments")
+        print(f"  Bounding box: lon {pipes_bbox['lon_min']} to {pipes_bbox['lon_max']}, lat {pipes_bbox['lat_min']} to {pipes_bbox['lat_max']}")
+
+        # Sample pipe for verification
+        sample = pipes[len(pipes)//2]  # middle pipe
+        print(f"\n  Sample pipe (mid-list):")
+        print(f"    ID: {sample['id']}")
+        print(f"    Risk: {sample['risk']}")
+        print(f"    Diameter: {sample['diameter']}")
+        print(f"    Material: {sample['material']}")
+        print(f"    Coordinate count: {len(sample['coordinates'])} points")
+        print(f"    First 3 coords: {sample['coordinates'][:3]}")
+
+        with open("pipes.json", "w") as f:
+            json.dump({
+                "city": "Kitchener, ON",
+                "bbox": pipes_bbox,
+                "pipes": pipes
+            }, f, indent=2)
+        print(f"\nEXPORTED pipes.json — {len(pipes)} pipe segments with LineString geometries")
+    else:
+        print("  WARNING: No valid pipe geometries to export")
+
     # --- AGGREGATE TO ZONES & EXPORT ---
     # Simple zoning: round lat/lon to a grid cell. Swap for real ward polygons if you have them.
     cent = mains.geometry.centroid
