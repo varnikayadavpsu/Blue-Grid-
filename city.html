@@ -4,35 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blue Grid — Kitchener Water Infrastructure Risk Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    :root {
-      --display: "Cormorant Garamond", Georgia, serif;
-      --body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --mono: "Courier New", Consolas, monospace;
-      --bg-0: #141d1b;
-      --bg-1: #1d2b27;
-      --panel: rgba(29, 42, 38, 0.84);
-      --panel-strong: rgba(24, 36, 33, 0.94);
-      --panel-soft: rgba(58, 77, 69, 0.34);
-      --line: rgba(180, 196, 174, 0.24);
-      --line-strong: rgba(174, 196, 179, 0.38);
-      --text: #f4eddd;
-      --muted: #aebeb8;
-      --accent: #93bca9;
-      --accent-strong: #bdd6c8;
-      --cream: #fbf5e7;
-      --risk-low: #5faf8c;
-      --risk-medium: #d7a34a;
-      --risk-high: #c86c43;
-      --risk-critical: #d85f58;
-      --radius: 10px;
-      --radius-small: 7px;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -40,17 +13,15 @@
     }
 
     body {
-      font-family: var(--body);
-      background:
-        radial-gradient(circle at 8% 10%, rgba(122, 143, 111, 0.16), transparent 28rem),
-        linear-gradient(135deg, var(--bg-0) 0%, var(--bg-1) 100%);
-      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0A1A2F 0%, #12243D 100%);
+      color: #E8F4F8;
       overflow: hidden;
       height: 100vh;
     }
 
     .mono {
-      font-family: var(--mono);
+      font-family: 'Courier New', Consolas, monospace;
       font-weight: 600;
     }
 
@@ -61,58 +32,32 @@
       left: 0;
       right: 0;
       height: 80px;
-      background: rgba(21, 31, 28, 0.9);
+      background: rgba(10, 26, 47, 0.85);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line-strong);
+      border-bottom: 2px solid rgba(29, 158, 117, 0.3);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 30px;
-      padding: 0 34px;
+      justify-content: space-around;
+      padding: 0 40px;
       z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
-    }
-
-    .archive-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 220px;
-      color: var(--accent-strong);
-      font-family: "Fraunces", var(--display);
-      font-size: 12px;
-      font-weight: 650;
-      letter-spacing: 0.16em;
-      line-height: 1.35;
-      text-transform: uppercase;
-    }
-
-    .archive-eyebrow::before {
-      content: "";
-      width: 34px;
-      height: 1px;
-      flex: 0 0 auto;
-      background: rgba(189, 214, 200, 0.62);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .kpi-item {
       text-align: center;
-      min-width: 120px;
     }
 
     .kpi-label {
-      font-family: var(--display);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1.3px;
-      color: var(--muted);
+      letter-spacing: 1.2px;
+      color: #6B9DAA;
       margin-bottom: 6px;
     }
 
     .kpi-value {
       font-size: 32px;
-      color: var(--accent-strong);
+      color: #1DD6A1;
       font-weight: bold;
     }
 
@@ -122,59 +67,57 @@
       left: 20px;
       top: 100px;
       width: 320px;
-      background: var(--panel);
+      background: rgba(15, 30, 50, 0.75);
       backdrop-filter: blur(16px);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      padding: 22px;
+      border-radius: 12px;
+      border: 1px solid rgba(29, 158, 117, 0.25);
+      padding: 20px;
       z-index: 999;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       max-height: calc(100vh - 140px);
       overflow-y: auto;
     }
 
     .panel-header {
-      font-family: var(--display);
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      color: var(--accent-strong);
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--line-strong);
+      color: #1DD6A1;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(29, 158, 117, 0.3);
     }
 
     .priority-item {
-      background: var(--panel-soft);
-      border-left: 3px solid var(--risk-critical);
-      padding: 13px;
-      margin-bottom: 11px;
-      border-radius: var(--radius-small);
+      background: rgba(20, 40, 65, 0.6);
+      border-left: 3px solid #E24B4A;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .priority-item:hover {
-      background: rgba(71, 91, 82, 0.42);
+      background: rgba(30, 50, 75, 0.8);
       transform: translateX(4px);
     }
 
     .priority-rank {
       font-size: 10px;
-      color: var(--muted);
+      color: #6B9DAA;
       margin-bottom: 4px;
     }
 
     .priority-zone {
       font-size: 13px;
-      color: var(--text);
+      color: #E8F4F8;
       margin-bottom: 6px;
     }
 
     .priority-risk {
       font-size: 20px;
-      color: var(--risk-critical);
+      color: #E24B4A;
       font-weight: bold;
     }
 
@@ -199,9 +142,9 @@
     #map {
       width: 100%;
       height: 100%;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.46);
+      border-radius: 12px;
+      border: 1px solid rgba(29, 158, 117, 0.25);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
     /* Detail Panel (right) */
@@ -210,13 +153,13 @@
       right: -400px;
       top: 100px;
       width: 380px;
-      background: var(--panel);
+      background: rgba(15, 30, 50, 0.75);
       backdrop-filter: blur(16px);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
+      border-radius: 12px;
+      border: 1px solid rgba(29, 158, 117, 0.25);
       padding: 24px;
       z-index: 999;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.46);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       max-height: calc(100vh - 140px);
       overflow-y: auto;
       transition: right 0.3s ease;
@@ -232,7 +175,7 @@
       right: 20px;
       background: none;
       border: none;
-      color: var(--muted);
+      color: #6B9DAA;
       font-size: 24px;
       cursor: pointer;
       padding: 0;
@@ -244,12 +187,12 @@
     }
 
     .detail-close:hover {
-      color: var(--risk-critical);
+      color: #E24B4A;
     }
 
     .detail-zone-id {
       font-size: 12px;
-      color: var(--muted);
+      color: #6B9DAA;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 8px;
@@ -257,15 +200,14 @@
 
     .detail-risk-score {
       font-size: 64px;
-      color: var(--accent-strong);
+      color: #1DD6A1;
       font-weight: bold;
       margin-bottom: 4px;
     }
 
     .detail-risk-label {
-      font-family: var(--display);
-      font-size: 14px;
-      color: var(--muted);
+      font-size: 13px;
+      color: #6B9DAA;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 24px;
@@ -276,12 +218,10 @@
     }
 
     .detail-section-title {
-      font-family: var(--display);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 1.2px;
-      color: var(--accent-strong);
+      color: #1DD6A1;
       margin-bottom: 12px;
     }
 
@@ -291,7 +231,7 @@
 
     .factor-label {
       font-size: 11px;
-      color: var(--muted);
+      color: #6B9DAA;
       margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
@@ -299,7 +239,7 @@
 
     .factor-track {
       height: 8px;
-      background: rgba(18, 25, 23, 0.6);
+      background: rgba(20, 40, 65, 0.6);
       border-radius: 4px;
       overflow: hidden;
       position: relative;
@@ -307,15 +247,15 @@
 
     .factor-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--risk-low) 0%, var(--accent-strong) 100%);
+      background: linear-gradient(90deg, #1D9E75 0%, #1DD6A1 100%);
       border-radius: 4px;
       transition: width 0.6s ease;
     }
 
     .detail-stat {
-      background: var(--panel-soft);
+      background: rgba(20, 40, 65, 0.4);
       padding: 12px;
-      border-radius: var(--radius-small);
+      border-radius: 6px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -324,25 +264,25 @@
 
     .detail-stat-label {
       font-size: 12px;
-      color: var(--muted);
+      color: #6B9DAA;
     }
 
     .detail-stat-value {
       font-size: 20px;
-      color: var(--text);
+      color: #E8F4F8;
       font-weight: bold;
     }
 
     /* Action Plan Button */
     .action-plan-button {
       width: 100%;
-      background: #354f45;
-      border: 1px solid var(--line-strong);
-      color: var(--cream);
+      background: linear-gradient(135deg, #1D9E75 0%, #1DD6A1 100%);
+      border: none;
+      color: white;
       padding: 14px 20px;
       font-size: 14px;
       font-weight: 600;
-      border-radius: var(--radius-small);
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 20px;
       transition: all 0.3s;
@@ -352,13 +292,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+      box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
     }
 
     .action-plan-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
-      background: #416154;
+      box-shadow: 0 6px 20px rgba(29, 158, 117, 0.5);
+      background: linear-gradient(135deg, #1DD6A1 0%, #1D9E75 100%);
     }
 
     .action-plan-button:active {
@@ -386,12 +326,12 @@
 
     /* Action Plan Output */
     #action-plan-content {
-      background: var(--panel-soft);
-      border-radius: var(--radius-small);
+      background: rgba(20, 40, 65, 0.4);
+      border-radius: 8px;
       padding: 16px;
       font-size: 13px;
       line-height: 1.6;
-      color: var(--text);
+      color: #E8F4F8;
     }
 
     .plan-section {
@@ -403,10 +343,9 @@
     }
 
     .plan-section-title {
-      font-family: var(--display);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--accent-strong);
+      color: #1DD6A1;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 10px;
@@ -419,23 +358,23 @@
 
     .plan-section li {
       margin-bottom: 6px;
-      color: var(--text);
+      color: #E8F4F8;
     }
 
     .plan-error {
-      background: rgba(216, 95, 88, 0.18);
-      border: 1px solid rgba(216, 95, 88, 0.42);
-      border-radius: var(--radius-small);
+      background: rgba(226, 75, 74, 0.2);
+      border: 1px solid rgba(226, 75, 74, 0.4);
+      border-radius: 6px;
       padding: 12px;
-      color: #ff948d;
+      color: #E24B4A;
       font-size: 12px;
     }
 
     /* Similar Breaks */
     .similar-break-item {
-      background: var(--panel-soft);
-      border-left: 3px solid var(--accent);
-      border-radius: var(--radius-small);
+      background: rgba(20, 40, 65, 0.4);
+      border-left: 3px solid #1DD6A1;
+      border-radius: 6px;
       padding: 12px;
       margin-bottom: 10px;
       font-size: 12px;
@@ -450,34 +389,34 @@
 
     .similar-break-zone {
       font-weight: 600;
-      color: var(--text);
+      color: #E8F4F8;
     }
 
     .similar-break-similarity {
       font-size: 11px;
-      color: var(--accent-strong);
-      font-family: var(--mono);
+      color: #1DD6A1;
+      font-family: 'Courier New', monospace;
     }
 
     .similar-break-details {
       font-size: 11px;
-      color: var(--muted);
+      color: #6B9DAA;
       line-height: 1.5;
     }
 
     .similar-breaks-loading {
       text-align: center;
-      color: var(--muted);
+      color: #6B9DAA;
       padding: 20px;
       font-size: 12px;
     }
 
     .similar-breaks-error {
-      background: rgba(216, 95, 88, 0.18);
-      border: 1px solid rgba(216, 95, 88, 0.42);
-      border-radius: var(--radius-small);
+      background: rgba(226, 75, 74, 0.2);
+      border: 1px solid rgba(226, 75, 74, 0.4);
+      border-radius: 6px;
       padding: 10px;
-      color: #ff948d;
+      color: #E24B4A;
       font-size: 11px;
     }
 
@@ -502,10 +441,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(158, 55, 52, 0.96);
+      background: rgba(226, 75, 74, 0.95);
       color: white;
       padding: 30px 40px;
-      border-radius: var(--radius);
+      border-radius: 12px;
       font-size: 16px;
       text-align: center;
       z-index: 10000;
@@ -519,14 +458,14 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: var(--accent-strong);
+      color: #1DD6A1;
       font-size: 18px;
       z-index: 10000;
     }
 
     /* Leaflet Customization */
     .leaflet-container {
-      background: var(--bg-0);
+      background: #0A1A2F;
     }
 
     .pulse {
@@ -549,21 +488,20 @@
       position: absolute;
       bottom: 30px;
       right: 20px;
-      background: var(--panel-strong);
+      background: rgba(15, 30, 50, 0.9);
       backdrop-filter: blur(12px);
       padding: 15px;
-      border-radius: var(--radius-small);
-      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      border: 1px solid rgba(29, 158, 117, 0.3);
       font-size: 12px;
       z-index: 1000;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
 
     .legend-title {
-      font-family: var(--display);
       font-weight: bold;
       margin-bottom: 10px;
-      color: var(--accent-strong);
+      color: #1DD6A1;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-size: 11px;
@@ -583,34 +521,34 @@
     }
 
     .legend-label {
-      color: var(--text);
+      color: #E8F4F8;
       font-size: 11px;
     }
 
     .zone-coord-subtitle {
       font-size: 10px;
-      color: var(--muted);
+      color: #6B9DAA;
       margin-top: 2px;
     }
 
     /* Custom Leaflet Popup */
     .leaflet-popup-content-wrapper {
-      background: var(--panel-strong);
-      color: var(--text);
-      border-radius: var(--radius-small);
-      border: 1px solid var(--line-strong);
+      background: rgba(15, 30, 50, 0.95);
+      color: #E8F4F8;
+      border-radius: 8px;
+      border: 1px solid rgba(29, 158, 117, 0.4);
     }
 
     .leaflet-popup-tip {
-      background: var(--panel-strong);
+      background: rgba(15, 30, 50, 0.95);
     }
 
     /* Custom Tooltip */
     .leaflet-tooltip.zone-tooltip {
-      background: var(--panel-strong);
-      color: var(--text);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-small);
+      background: rgba(15, 30, 50, 0.95);
+      color: #E8F4F8;
+      border: 1px solid rgba(29, 158, 117, 0.4);
+      border-radius: 6px;
       padding: 6px 10px;
       font-size: 12px;
       font-weight: 500;
@@ -618,7 +556,7 @@
     }
 
     .leaflet-tooltip.zone-tooltip::before {
-      border-top-color: var(--panel-strong);
+      border-top-color: rgba(15, 30, 50, 0.95);
     }
 
     /* Scrollbar */
@@ -627,24 +565,23 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(18, 25, 23, 0.42);
+      background: rgba(20, 40, 65, 0.3);
       border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(147, 188, 169, 0.52);
+      background: rgba(29, 158, 117, 0.5);
       border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(189, 214, 200, 0.7);
+      background: rgba(29, 158, 117, 0.7);
     }
   </style>
 </head>
 <body>
   <!-- KPI Banner -->
   <div id="kpi-banner">
-    <div class="archive-eyebrow">Kitchener Water Archive</div>
     <div class="kpi-item">
       <div class="kpi-label">Total Zones</div>
       <div class="kpi-value mono" id="kpi-zones">—</div>
@@ -675,19 +612,19 @@
     <div class="map-legend">
       <div class="legend-title">Risk Levels</div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #5faf8c;"></div>
+        <div class="legend-color" style="background: #1D9E75;"></div>
         <div class="legend-label">Low (0-30)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #d7a34a;"></div>
+        <div class="legend-color" style="background: #EF9F27;"></div>
         <div class="legend-label">Medium (31-60)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #c86c43;"></div>
+        <div class="legend-color" style="background: #D85A30;"></div>
         <div class="legend-label">High (61-80)</div>
       </div>
       <div class="legend-item">
-        <div class="legend-color" style="background: #d85f58;"></div>
+        <div class="legend-color" style="background: #E24B4A;"></div>
         <div class="legend-label">Critical (81-100)</div>
       </div>
     </div>
@@ -800,10 +737,10 @@
 
     // Risk color mapping
     function getRiskColor(risk) {
-      if (risk >= 81) return '#d85f58'; // Critical - hydrant red
-      if (risk >= 61) return '#c86c43'; // High - orange
-      if (risk >= 31) return '#d7a34a'; // Medium - amber
-      return '#5faf8c'; // Low - teal
+      if (risk >= 81) return '#E24B4A'; // Critical - hydrant red
+      if (risk >= 61) return '#D85A30'; // High - orange
+      if (risk >= 31) return '#EF9F27'; // Medium - amber
+      return '#1D9E75'; // Low - teal
     }
 
     // Map lat/lon to Kitchener neighborhood names with granular boundaries
@@ -940,7 +877,7 @@
       btn.disabled = true;
       btn.classList.add('loading');
       btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generating Plan...';
-      contentDiv.innerHTML = '<div style="text-align: center; color: #aebeb8; padding: 20px;">Analyzing zone data and generating operational plan...</div>';
+      contentDiv.innerHTML = '<div style="text-align: center; color: #6B9DAA; padding: 20px;">Analyzing zone data and generating operational plan...</div>';
       outputDiv.style.display = 'block';
 
       try {
@@ -1331,10 +1268,10 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         // Popup on click
         marker.bindPopup(`
           <div style="font-size: 12px;">
-            <div style="color: #f4eddd; margin-bottom: 2px; font-weight: bold;">${neighborhood}</div>
-            <div style="color: #aebeb8; font-size: 10px; margin-bottom: 6px;">${zone.id}</div>
+            <div style="color: #E8F4F8; margin-bottom: 2px; font-weight: bold;">${neighborhood}</div>
+            <div style="color: #6B9DAA; font-size: 10px; margin-bottom: 6px;">${zone.id}</div>
             <div style="font-size: 18px; color: ${color}; font-weight: bold;" class="mono">${zone.risk}</div>
-            <div style="color: #aebeb8; font-size: 10px;">Risk Score</div>
+            <div style="color: #6B9DAA; font-size: 10px;">Risk Score</div>
           </div>
         `);
 
