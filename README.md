@@ -16,13 +16,18 @@ Blue Grid is a civic water-infrastructure risk dashboard that uses **real failur
 
 ## Live Demo
 
-**Start here:**
+**Fastest way (Mac):** Double-click `start_demo.command` to launch everything.
+
+**Or run manually:**
 ```bash
-cd ~/Desktop/bluegrid
-python3 -m http.server 8000
+./start_demo.command
 ```
 
-Then open: **http://localhost:8000/landing.html**
+**Or minimal (dashboard only):**
+```bash
+python3 -m http.server 8000
+# Then open http://localhost:8000/landing.html
+```
 
 ---
 
@@ -63,6 +68,31 @@ Then open: **http://localhost:8000/landing.html**
 
 ## Quick Start
 
+### 🚀 One-Command Demo Launch (Recommended)
+
+**Mac users:** Double-click `start_demo.command` in Finder, or:
+```bash
+./start_demo.command
+```
+
+This will:
+- ✓ Start web server on port 8000
+- ✓ Start Anthropic API proxy on port 5002
+- ✓ Start Redis vector search API on port 5001
+- ✓ Open browser to http://localhost:8000
+- ✓ Display all service logs
+
+**To stop all services:**
+```bash
+./stop_demo.sh
+```
+
+Or just press `Ctrl+C` in the terminal running `start_demo.command`.
+
+---
+
+### Manual Setup (Alternative)
+
 ### 1. Core Dashboard (No setup needed)
 ```bash
 python3 -m http.server 8000
@@ -75,6 +105,9 @@ python3 -m http.server 8000
 {
   "anthropicApiKey": "sk-ant-your-key-here"
 }
+
+# Start the proxy
+python3 anthropic_proxy.py
 ```
 See **API_SETUP.md** for details.
 
