@@ -798,6 +798,98 @@
     .break-meta-label {
       font-weight: 600;
     }
+
+    /* AI Results Modal */
+    #ai-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(33, 53, 47, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    #ai-modal-overlay.active {
+      display: flex;
+    }
+
+    #ai-modal {
+      position: relative;
+      background: var(--panel-strong);
+      border-radius: var(--radius);
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 24px 64px rgba(33, 53, 47, 0.4);
+      max-width: 720px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--line-strong);
+      background: rgba(241, 235, 216, 0.5);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .ai-modal-title {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--accent-strong);
+    }
+
+    .ai-modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(113, 142, 119, 0.15);
+      color: var(--accent-strong);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-modal-close:hover {
+      background: rgba(147, 188, 169, 0.3);
+      transform: scale(1.05);
+    }
+
+    .ai-modal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .ai-modal-loading {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px;
+    }
+
+    .ai-modal-error {
+      background: rgba(210, 79, 75, 0.1);
+      border: 1px solid rgba(210, 79, 75, 0.3);
+      border-radius: var(--radius-small);
+      padding: 16px;
+      color: #8b3a38;
+    }
   </style>
 </head>
 <body>
@@ -963,6 +1055,19 @@
   <!-- Loading -->
   <div id="loading">Loading zone data...</div>
 
+  <!-- AI Results Modal -->
+  <div id="ai-modal-overlay" onclick="closeAIModal(event)">
+    <div id="ai-modal" onclick="event.stopPropagation()">
+      <div class="ai-modal-header">
+        <div class="ai-modal-title" id="ai-modal-title">AI Results</div>
+        <button class="ai-modal-close" onclick="closeAIModal()">×</button>
+      </div>
+      <div class="ai-modal-content" id="ai-modal-content">
+        <!-- Content populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -1017,6 +1122,34 @@
       // Fall back to Render URL
       console.log('✓ Using Render API');
       return fetch(`${RENDER_URL}${endpoint}`, options);
+    }
+
+    // Open AI modal with content
+    function openAIModal(title, content) {
+      const overlay = document.getElementById('ai-modal-overlay');
+      const modalTitle = document.getElementById('ai-modal-title');
+      const modalContent = document.getElementById('ai-modal-content');
+
+      modalTitle.textContent = title;
+      modalContent.innerHTML = content;
+      overlay.classList.add('active');
+
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close AI modal
+    function closeAIModal(event) {
+      // If event is provided, only close if clicking the overlay itself or close button
+      if (event && event.target.id !== 'ai-modal-overlay' && !event.target.classList.contains('ai-modal-close')) {
+        return;
+      }
+
+      const overlay = document.getElementById('ai-modal-overlay');
+      overlay.classList.remove('active');
+
+      // Restore body scroll
+      document.body.style.overflow = '';
     }
 
     // Risk color mapping
@@ -1147,19 +1280,18 @@
     // Generate action plan using Claude API via proxy
     async function generateActionPlan(zone) {
       const btn = document.getElementById('action-plan-btn');
-      const outputDiv = document.getElementById('action-plan-output');
-      const contentDiv = document.getElementById('action-plan-content');
 
       // Show loading state
       btn.disabled = true;
       btn.classList.add('loading');
       btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generating Plan...';
-      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing zone data and generating operational plan...</div>';
-      outputDiv.style.display = 'block';
+
+      const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
+
+      // Open modal with loading state
+      openAIModal('Action Plan — ' + neighborhood, '<div class="ai-modal-loading">Analyzing zone data and generating operational plan...</div>');
 
       try {
-        const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
-
         // Call proxy API (tries localhost, falls back to Render)
         const response = await fetchAPI('/api/action-plan', {
           method: 'POST',
@@ -1186,15 +1318,16 @@
         const data = await response.json();
 
         if (data.success) {
-          // Parse and render the plan
-          renderActionPlan(data.plan, contentDiv);
+          // Parse and render the plan in modal
+          const formattedPlan = formatActionPlan(data.plan);
+          document.getElementById('ai-modal-content').innerHTML = formattedPlan;
         } else {
           throw new Error(data.error || 'Unknown error');
         }
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
+        document.getElementById('ai-modal-content').innerHTML = `<div class="ai-modal-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
@@ -1203,8 +1336,8 @@
       }
     }
 
-    // Render action plan with formatting
-    function renderActionPlan(planText, container) {
+    // Format action plan with formatting
+    function formatActionPlan(planText) {
       // Split into sections based on headers
       const sections = [];
       const lines = planText.split('\n');
@@ -1245,7 +1378,7 @@
         html += `</ul></div>`;
       }
 
-      container.innerHTML = html || planText;
+      return html || planText;
     }
 
     // Fetch similar breaks from Redis
@@ -1317,15 +1450,17 @@
     // Explain pipe/zone risk using Claude API via proxy
     async function explainPipe(item, isPipe = true) {
       const btn = document.getElementById('explain-pipe-btn');
-      const outputDiv = document.getElementById('explanation-output');
-      const contentDiv = document.getElementById('explanation-content');
 
       // Show loading state
       btn.disabled = true;
       btn.classList.add('loading');
       btn.innerHTML = '<span class="action-plan-icon">💡</span> Explaining...';
-      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing risk factors...</div>';
-      outputDiv.style.display = 'block';
+
+      const titlePrefix = isPipe ? 'Pipe Risk Explanation' : 'Zone Risk Explanation';
+      const titleName = isPipe ? (item.id || 'Unknown') : getNeighborhoodName(item.lat, item.lon);
+
+      // Open modal with loading state
+      openAIModal(`${titlePrefix} — ${titleName}`, '<div class="ai-modal-loading">Analyzing risk factors...</div>');
 
       try {
         let requestBody;
@@ -1382,15 +1517,15 @@
         const data = await response.json();
 
         if (data.success) {
-          // Render the explanation
-          contentDiv.innerHTML = `<div style="line-height: 1.7;">${data.explanation.replace(/\n/g, '<br>')}</div>`;
+          // Render the explanation in modal
+          document.getElementById('ai-modal-content').innerHTML = `<div style="line-height: 1.7;">${data.explanation.replace(/\n/g, '<br>')}</div>`;
         } else {
           throw new Error(data.error || 'Unknown error');
         }
 
       } catch (error) {
         console.error('Explanation generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate explanation: ${error.message}</div>`;
+        document.getElementById('ai-modal-content').innerHTML = `<div class="ai-modal-error">⚠️ Failed to generate explanation: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
@@ -2105,18 +2240,19 @@
     // Generate action plan for a pipe via proxy
     async function generatePipeActionPlan(pipe) {
       const btn = document.getElementById('action-plan-btn');
-      const outputDiv = document.getElementById('action-plan-output');
-      const contentDiv = document.getElementById('action-plan-content');
 
       // Show loading state
       btn.disabled = true;
       btn.classList.add('loading');
       btn.innerHTML = '<span class="action-plan-icon">⚡</span> Generating Plan...';
-      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing pipe data and generating operational plan...</div>';
-      outputDiv.style.display = 'block';
+
+      const materialStr = pipe.material ? pipe.material : 'Unknown';
+      const pipeTitle = `Pipe ${pipe.id || 'Unknown'} (${materialStr}, ${pipe.age}yr)`;
+
+      // Open modal with loading state
+      openAIModal('Action Plan — ' + pipeTitle, '<div class="ai-modal-loading">Analyzing pipe data and generating operational plan...</div>');
 
       try {
-        const materialStr = pipe.material ? pipe.material : 'Unknown';
         const diameterStr = pipe.diameter ? `${pipe.diameter}mm` : 'Unknown';
 
         // Estimate factors for pipe (simplified calculation for display)
@@ -2153,15 +2289,16 @@
         const data = await response.json();
 
         if (data.success) {
-          // Parse and render the plan
-          renderActionPlan(data.plan, contentDiv);
+          // Format and display the plan in modal
+          const formattedPlan = formatActionPlan(data.plan);
+          document.getElementById('ai-modal-content').innerHTML = formattedPlan;
         } else {
           throw new Error(data.error || 'Unknown error');
         }
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
+        document.getElementById('ai-modal-content').innerHTML = `<div class="ai-modal-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
