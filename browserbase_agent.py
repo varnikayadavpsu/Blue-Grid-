@@ -2,23 +2,29 @@
 """
 Blue Grid — Browserbase Data Ingestion Agent
 
-Uses Browserbase to fetch the latest water main break records from City of Kitchener.
+Uses Browserbase cloud browser to fetch the latest water main break records from
+City of Kitchener's ArcGIS REST API.
 
-Dependencies: pip install browserbase playwright anthropic
+This demonstrates Browserbase integration by:
+  - Creating a remote browser session in Browserbase's cloud
+  - Using Playwright to control the browser
+  - Fetching data from Kitchener's public FeatureServer
+  - Outputting in a format compatible with build_data.py
+
+Dependencies: pip install browserbase playwright
 Setup:
-  1. Get Browserbase API key: https://www.browserbase.com/
-  2. Get Anthropic API key: https://console.anthropic.com/
-  3. Add both to config.json:
+  1. Sign up at https://www.browserbase.com/ (use code: STARTERPACK)
+  2. Get your API key from the dashboard
+  3. Add to config.json:
      {
-       "anthropicApiKey": "sk-ant-...",
        "browserbaseApiKey": "bb_..."
      }
+  4. Install Playwright browsers: playwright install chromium
 
 Run: python browserbase_agent.py
 Output: latest_breaks.json (compatible with build_data.py)
 """
 
-import os
 import json
 import sys
 from datetime import datetime
@@ -27,13 +33,15 @@ try:
     from browserbase import Browserbase
     from playwright.sync_api import sync_playwright
 except ImportError:
-    print("Missing dependencies. Install with:")
-    print("  pip install browserbase playwright anthropic")
+    print("ERROR: Missing dependencies. Install with:")
+    print("  pip install browserbase playwright")
+    print("  playwright install chromium")
     sys.exit(1)
 
-# Configuration
-KITCHENER_BREAKS_URL = "https://open-kitchenergis.opendata.arcgis.com/datasets/water-main-breaks/explore"
+# Configuration - Kitchener Water Main Breaks FeatureServer
+BREAKS_API_URL = "https://services1.arcgis.com/qAo1OsXi67t7XgmS/ArcGIS/rest/services/Water_Main_Breaks/FeatureServer/0/query"
 OUTPUT_FILE = "latest_breaks.json"
+LOG_FILE = "ingestion.log"
 
 def load_config():
     """Load API keys from config.json"""
@@ -52,123 +60,143 @@ def load_config():
         print("ERROR: config.json not found")
         sys.exit(1)
 
+def log_to_file(message):
+    """Append message to log file"""
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open(LOG_FILE, 'a') as f:
+        f.write(f"[{timestamp}] {message}\n")
+
 def fetch_latest_breaks(api_key):
-    """Use Browserbase to fetch latest break records from Kitchener portal"""
-    print("\n" + "="*70)
+    """Use Browserbase to fetch latest break records from Kitchener ArcGIS REST API"""
+    print("\n" + "="*80)
     print("BROWSERBASE AGENT — FETCHING LATEST WATER MAIN BREAKS")
-    print("="*70)
-    print(f"Target: {KITCHENER_BREAKS_URL}")
+    print("="*80)
+    print(f"Target: Kitchener Water Main Breaks FeatureServer")
     print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("="*70 + "\n")
+    print(f"Using: Browserbase cloud browser platform")
+    print("="*80 + "\n")
+
+    log_to_file("Starting Browserbase agent")
 
     try:
-        # Initialize Browserbase
+        # Initialize Browserbase client
+        print("Initializing Browserbase client...")
         bb = Browserbase(api_key=api_key)
+        log_to_file("Browserbase client initialized")
 
-        # Create a session
-        print("Creating Browserbase session...")
-        session = bb.sessions.create()
-        print(f"✓ Session created: {session.id}")
+        # Create a session in Browserbase's cloud
+        print("Creating remote browser session in Browserbase cloud...")
+        session = bb.sessions.create(project_id=None)  # Uses default project
+        session_id = session.id
+        connect_url = session.connect_url
 
-        # Connect to the browser
-        print("Connecting to remote browser...")
+        print(f"✓ Session created: {session_id}")
+        print(f"  Connect URL: {connect_url[:50]}...")
+        log_to_file(f"Session created: {session_id}")
+
+        # Connect to the remote browser using Playwright
+        print("\nConnecting to Browserbase remote browser via Playwright...")
         with sync_playwright() as playwright:
-            browser = playwright.chromium.connect_over_cdp(session.connect_url)
-            context = browser.contexts[0]
-            page = context.pages[0]
+            # Connect to the Browserbase browser over Chrome DevTools Protocol
+            browser = playwright.chromium.connect_over_cdp(connect_url)
+            print(f"✓ Connected to remote Chromium browser")
+            log_to_file("Connected to Browserbase browser")
 
-            print(f"✓ Connected to browser")
-            print(f"Navigating to {KITCHENER_BREAKS_URL}...")
+            # Get the default context and page
+            context = browser.contexts[0] if browser.contexts else browser.new_context()
+            page = context.pages[0] if context.pages else context.new_page()
 
-            # Navigate to the page
-            page.goto(KITCHENER_BREAKS_URL, wait_until='networkidle', timeout=30000)
-            print("✓ Page loaded")
+            print(f"✓ Browser page ready")
 
-            # Wait for data to load
-            print("Waiting for data table to load...")
-            page.wait_for_selector('table, .data-table, .feature-table', timeout=15000)
-            print("✓ Data table found")
+            # Build the ArcGIS REST API query URL to get recent breaks
+            # Query params: where=1=1 (all records), outFields=*, f=json, orderByFields=OBJECTID DESC, resultRecordCount=20
+            query_url = (
+                f"{BREAKS_API_URL}?"
+                f"where=1=1&"
+                f"outFields=*&"
+                f"orderByFields=OBJECTID+DESC&"
+                f"resultRecordCount=20&"
+                f"f=json"
+            )
 
-            # Extract break records using AI-powered extraction
-            print("Extracting break records...")
+            print(f"\nNavigating to ArcGIS REST API endpoint...")
+            print(f"  URL: {query_url[:80]}...")
 
-            # Get page content
-            content = page.content()
+            # Navigate to the API endpoint
+            response = page.goto(query_url, wait_until='networkidle', timeout=30000)
+            print(f"✓ Page loaded (HTTP {response.status})")
+            log_to_file(f"Navigated to API endpoint: HTTP {response.status}")
 
-            # Try to find JSON data in page (ArcGIS often embeds it)
-            page_text = page.evaluate('document.body.innerText')
+            # Extract the JSON response from the page
+            print("\nExtracting JSON data from response...")
+            page_content = page.content()
 
-            # Simple extraction: look for recent breaks in the visible content
-            # In a real implementation, we'd parse the ArcGIS REST API response
-            # For demo purposes, we'll extract metadata and show the approach
+            # The page will display raw JSON - extract it
+            json_text = page.evaluate('document.body.innerText')
 
-            breaks_found = extract_breaks_from_page(page)
+            # Parse the JSON response
+            try:
+                data = json.loads(json_text)
+                print(f"✓ JSON parsed successfully")
 
-            print(f"✓ Extracted {len(breaks_found)} break records")
+                if 'features' in data:
+                    features = data['features']
+                    print(f"✓ Found {len(features)} break records")
+                    log_to_file(f"Extracted {len(features)} break records")
 
-            # Close browser
-            browser.close()
+                    # Convert to simplified format
+                    breaks = []
+                    for feature in features:
+                        attrs = feature.get('attributes', {})
+                        geom = feature.get('geometry', {})
 
-            return breaks_found
+                        breaks.append({
+                            'OBJECTID': attrs.get('OBJECTID'),
+                            'INCIDENT_DATE': attrs.get('INCIDENT_DATE') or attrs.get('DATE'),
+                            'STREET': attrs.get('STREET') or attrs.get('LOCATION'),
+                            'BREAK_TYPE': attrs.get('BREAK_TYPE') or attrs.get('TYPE'),
+                            'STATUS': attrs.get('STATUS'),
+                            'ASSET_MATERIAL': attrs.get('ASSET_MATERIAL') or attrs.get('MATERIAL'),
+                            'ASSET_SIZE': attrs.get('ASSET_SIZE') or attrs.get('DIAMETER'),
+                            'geometry': geom,
+                            '_scraped_at': datetime.now().isoformat(),
+                            '_source': 'browserbase_agent',
+                            '_session_id': session_id
+                        })
+
+                    print(f"\nSample record (first break):")
+                    if breaks:
+                        print(f"  OBJECTID: {breaks[0].get('OBJECTID')}")
+                        print(f"  Street: {breaks[0].get('STREET')}")
+                        print(f"  Type: {breaks[0].get('BREAK_TYPE')}")
+                        print(f"  Status: {breaks[0].get('STATUS')}")
+
+                    # Close browser
+                    print("\nClosing browser session...")
+                    browser.close()
+                    log_to_file("Browser session closed")
+
+                    return breaks
+                else:
+                    print("✗ No 'features' field in response")
+                    log_to_file("ERROR: No features in API response")
+                    browser.close()
+                    return []
+
+            except json.JSONDecodeError as e:
+                print(f"✗ Failed to parse JSON: {e}")
+                print(f"  Page content preview: {json_text[:200]}...")
+                log_to_file(f"JSON parse error: {e}")
+                browser.close()
+                return []
 
     except Exception as e:
-        print(f"✗ Error during scraping: {e}")
-        print("\nFalling back to simulated data for demo...")
-        return generate_simulated_breaks()
-
-def extract_breaks_from_page(page):
-    """Extract break records from the page"""
-    try:
-        # Try to click on the API/download button to get structured data
-        # ArcGIS portals usually have an API link
-        api_link = page.query_selector('a[href*="FeatureServer"], a[href*="REST"], a:has-text("API")')
-
-        if api_link:
-            print("  Found API link, extracting structured data...")
-            # In production, we'd fetch from the REST endpoint directly
-            # For demo, return placeholder
-
-        # For this demo, we'll return a few recent simulated records
-        # In production, this would parse the actual table/API response
+        print(f"\n✗ Error during Browserbase session: {e}")
+        print(f"  Error type: {type(e).__name__}")
+        log_to_file(f"ERROR: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         return []
-
-    except Exception as e:
-        print(f"  Warning: Could not extract structured data: {e}")
-        return []
-
-def generate_simulated_breaks():
-    """Generate simulated recent breaks for demonstration"""
-    # This simulates what we'd get from live scraping
-    # In production, this would be real scraped data
-    import random
-    from datetime import timedelta
-
-    base_date = datetime.now()
-
-    simulated = []
-    for i in range(5):
-        break_date = base_date - timedelta(days=random.randint(0, 30))
-        simulated.append({
-            "OBJECTID": 3000 + i,
-            "INCIDENT_DATE": int(break_date.timestamp() * 1000),
-            "BREAK_TYPE": "MAIN",
-            "STATUS": "REPAIR COMPLETED",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -80.49 + random.uniform(-0.05, 0.05),  # Lon
-                    43.45 + random.uniform(-0.05, 0.05)    # Lat
-                ]
-            },
-            "STREET": f"Sample Street {i+1}",
-            "ASSET_MATERIAL": random.choice(["CI", "DI", "PVC"]),
-            "ASSET_SIZE": random.choice([150, 200, 250, 300]),
-            "BREAK_NATURE": "CORROSION",
-            "_scraped_at": datetime.now().isoformat(),
-            "_source": "browserbase_agent"
-        })
-
-    return simulated
 
 def save_breaks(breaks, filename):
     """Save breaks to JSON file"""
@@ -186,30 +214,47 @@ def save_breaks(breaks, filename):
     print(f"\n✓ Saved {len(breaks)} break records to {filename}")
 
 def main():
+    print("\n" + "="*80)
+    print("BLUE GRID — BROWSERBASE DATA INGESTION AGENT")
+    print("="*80)
+
     # Load configuration
     config = load_config()
 
-    # Fetch latest breaks
+    # Fetch latest breaks using Browserbase
     breaks = fetch_latest_breaks(config.get('browserbaseApiKey'))
 
-    # If no breaks found, use simulated data
-    if not breaks:
-        print("\nNo live data extracted. Using simulated recent breaks for demo...")
-        breaks = generate_simulated_breaks()
-
     # Save to file
-    save_breaks(breaks, OUTPUT_FILE)
+    if breaks and len(breaks) > 0:
+        save_breaks(breaks, OUTPUT_FILE)
 
-    print("\n" + "="*70)
-    print("AGENT COMPLETE")
-    print("="*70)
-    print(f"Output: {OUTPUT_FILE}")
-    print(f"Records: {len(breaks)}")
-    print("\nNext steps:")
-    print("  1. Review latest_breaks.json")
-    print("  2. Merge with existing data or re-run build_data.py with updated sources")
-    print("  3. Schedule this agent to run daily/weekly for continuous updates")
-    print("="*70 + "\n")
+        print("\n" + "="*80)
+        print("✓ AGENT COMPLETE — DATA SUCCESSFULLY FETCHED VIA BROWSERBASE")
+        print("="*80)
+        print(f"Output file: {OUTPUT_FILE}")
+        print(f"Records fetched: {len(breaks)}")
+        print(f"Log file: {LOG_FILE}")
+        print("\nWhat was demonstrated:")
+        print("  ✓ Browserbase session created in cloud")
+        print("  ✓ Remote browser controlled via Playwright")
+        print("  ✓ Data fetched from Kitchener ArcGIS REST API")
+        print("  ✓ Records extracted and saved to JSON")
+        print("\nNext steps:")
+        print("  1. Review latest_breaks.json")
+        print("  2. Integrate with build_data.py pipeline if needed")
+        print("  3. Schedule daily/weekly runs for continuous updates")
+        print("="*80 + "\n")
+    else:
+        print("\n" + "="*80)
+        print("✗ AGENT FAILED — NO DATA FETCHED")
+        print("="*80)
+        print("Troubleshooting:")
+        print("  1. Check your Browserbase API key in config.json")
+        print("  2. Ensure you have Browserbase credits (sign up with STARTERPACK)")
+        print("  3. Check ingestion.log for details")
+        print("  4. Verify Playwright is installed: playwright install chromium")
+        print("="*80 + "\n")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
