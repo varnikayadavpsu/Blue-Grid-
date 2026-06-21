@@ -169,19 +169,32 @@ def main():
 
     # --- FEATURES for the score (auto-detect field names) ---
     props0 = mains.iloc[0].to_dict()
-    fld_year = pick_field(props0, ["INSTALL_DATE", "YEAR_INSTALLED", "INSTALLYEAR", "INSTALLED", "YEARLAID", "DATE_LAID"])
-    fld_mat  = pick_field(props0, ["MATERIAL", "PIPE_MATERIAL", "MAT", "MATL"])
-    fld_dia  = pick_field(props0, ["DIAMETER", "DIA", "SIZE", "NOMINAL_DIAMETER"])
+    fld_year = pick_field(props0, ["INSTALLATION_DATE", "ASSET_YEAR_INSTALLED", "INSTALL_DATE", "YEAR_INSTALLED", "INSTALLYEAR", "INSTALLED", "YEARLAID", "DATE_LAID"])
+    fld_mat  = pick_field(props0, ["MATERIAL", "ASSET_MATERIAL", "PIPE_MATERIAL", "MAT", "MATL"])
+    fld_dia  = pick_field(props0, ["PIPE_SIZE", "ASSET_DIAMETER", "ASSET_SIZE", "DIAMETER", "DIA", "SIZE", "NOMINAL_DIAMETER"])
     print(f"\nDetected fields -> year:{fld_year}  material:{fld_mat}  diameter:{fld_dia}")
 
     import datetime
     this_year = datetime.date.today().year
     def to_age(v):
-        if v is None: return 60
+        if v is None or pd.isna(v):
+            return 60
         try:
-            y = int(str(v)[:4])
-            if 1850 < y <= this_year: return this_year - y
-        except: pass
+            # Handle epoch milliseconds (e.g., 283996800000 from ArcGIS)
+            if v > 100000000000:  # Likely epoch milliseconds
+                year = datetime.datetime.fromtimestamp(v / 1000).year
+                return this_year - year
+            # Handle negative epoch (before 1970)
+            elif v < 0 and v > -100000000000:
+                year = datetime.datetime.fromtimestamp(v / 1000).year
+                return this_year - year
+            # Handle plain year (e.g., 1990)
+            else:
+                y = int(str(v)[:4])
+                if 1850 < y <= this_year:
+                    return this_year - y
+        except:
+            pass
         return 60
     age = mains_m[fld_year].map(to_age) if fld_year else pd.Series([60]*len(mains_m))
     age_norm = (age / max(age.max(), 1)).clip(0, 1)
@@ -195,6 +208,16 @@ def main():
     mains_m["age"] = age.values
     mains_m["frag"] = (frag*100).round().astype(int)
     mains_m["histn"] = (hist*100).round().astype(int)
+
+    # Store raw material and diameter in mains_m for export
+    if fld_mat:
+        mains_m["material_raw"] = mains[fld_mat].values
+    else:
+        mains_m["material_raw"] = None
+    if fld_dia:
+        mains_m["diameter_raw"] = pd.to_numeric(mains[fld_dia], errors="coerce")
+    else:
+        mains_m["diameter_raw"] = None
 
     # --- MODEL (validation proof-point) ---
     print("\n" + "=" * 60); print("STEP 6 — MODEL VALIDATION"); print("=" * 60)
@@ -228,8 +251,9 @@ def main():
     print("EXPORTING INDIVIDUAL PIPE SEGMENTS (pipes.json)")
     print("=" * 60)
     pipes = []
-    for idx, row in mains.iterrows():  # use mains (4326) for export coordinates
-        geom = row.geometry
+    # Iterate over both dataframes in sync using iloc (positional indexing)
+    for i in range(len(mains)):
+        geom = mains.iloc[i].geometry
         if geom is None or geom.is_empty:
             continue
 
@@ -242,25 +266,26 @@ def main():
         else:
             continue
 
-        # Get risk score and other attributes from mains_m (metric CRS version has the scores)
-        risk_score = int(mains_m.loc[idx, "risk"]) if idx in mains_m.index else 50
-        age_val = int(mains_m.loc[idx, "age"]) if idx in mains_m.index else 60
+        # Get risk score and attributes from mains_m (same positional index)
+        risk_score = int(mains_m.iloc[i]["risk"])
+        age_val = int(mains_m.iloc[i]["age"])
 
-        # Get diameter if available
+        # Get diameter from stored raw values
         dia_val = None
-        if fld_dia and fld_dia in row:
-            try:
-                dia_val = float(row[fld_dia])
-            except:
-                pass
+        if "diameter_raw" in mains_m.columns:
+            d = mains_m.iloc[i]["diameter_raw"]
+            if pd.notna(d):
+                dia_val = float(d)
 
-        # Get material if available
+        # Get material from stored raw values
         mat_val = None
-        if fld_mat and fld_mat in row:
-            mat_val = str(row[fld_mat]) if row[fld_mat] else None
+        if "material_raw" in mains_m.columns:
+            m = mains_m.iloc[i]["material_raw"]
+            if pd.notna(m):
+                mat_val = str(m)
 
         pipes.append({
-            "id": f"pipe_{idx}",
+            "id": f"pipe_{i}",
             "coordinates": coords,
             "risk": risk_score,
             "diameter": dia_val,
@@ -282,15 +307,31 @@ def main():
         print(f"  Exported {len(pipes)} pipe segments")
         print(f"  Bounding box: lon {pipes_bbox['lon_min']} to {pipes_bbox['lon_max']}, lat {pipes_bbox['lat_min']} to {pipes_bbox['lat_max']}")
 
-        # Sample pipe for verification
-        sample = pipes[len(pipes)//2]  # middle pipe
-        print(f"\n  Sample pipe (mid-list):")
-        print(f"    ID: {sample['id']}")
-        print(f"    Risk: {sample['risk']}")
-        print(f"    Diameter: {sample['diameter']}")
-        print(f"    Material: {sample['material']}")
-        print(f"    Coordinate count: {len(sample['coordinates'])} points")
-        print(f"    First 3 coords: {sample['coordinates'][:3]}")
+        # Show variety verification - sample 5 pipes at different positions
+        print(f"\n  VARIETY CHECK — Sample of 5 pipes showing real per-pipe data:")
+        sample_indices = [0, len(pipes)//4, len(pipes)//2, 3*len(pipes)//4, len(pipes)-1]
+        for idx in sample_indices:
+            if idx < len(pipes):
+                p = pipes[idx]
+                install_year = 2026 - p['age'] if p['age'] else 'N/A'
+                print(f"    {p['id']:12s} | Age: {p['age']:3d}yr ({install_year}) | Material: {str(p['material']):12s} | Diameter: {p['diameter']} | Risk: {p['risk']}")
+
+        # Material distribution
+        materials = {}
+        for p in pipes:
+            mat = p['material'] if p['material'] else 'null'
+            materials[mat] = materials.get(mat, 0) + 1
+        print(f"\n  Material distribution across {len(pipes)} pipes:")
+        for mat, count in sorted(materials.items(), key=lambda x: -x[1])[:10]:
+            print(f"    {mat:20s}: {count:5d} pipes ({100*count/len(pipes):.1f}%)")
+
+        # Age distribution
+        ages = [p['age'] for p in pipes if p['age']]
+        if ages:
+            print(f"\n  Age distribution:")
+            print(f"    Min age: {min(ages)} years (installed ~{2026-min(ages)})")
+            print(f"    Max age: {max(ages)} years (installed ~{2026-max(ages)})")
+            print(f"    Mean age: {sum(ages)/len(ages):.1f} years")
 
         with open("pipes.json", "w") as f:
             json.dump({

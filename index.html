@@ -167,25 +167,37 @@
       display: grid;
       grid-template-columns: minmax(0, 0.96fr) minmax(280px, 0.74fr);
       align-items: center;
-      gap: 42px;
-      padding: 48px 0 70px;
+      gap: 56px;
+      padding: 64px 0 90px;
     }
 
     .hero-copy {
       max-width: 690px;
-      padding-top: 18px;
+      padding-top: 0;
+    }
+
+    @keyframes fadeRise {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       color: var(--moss);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.16em;
       text-transform: uppercase;
+      animation: fadeRise 0.6s ease-out 0.1s both;
     }
 
     .eyebrow::before {
@@ -198,27 +210,30 @@
     h1 {
       max-width: 760px;
       font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(4.4rem, 9vw, 8.4rem);
+      font-size: clamp(4rem, 8vw, 7.5rem);
       font-weight: 600;
-      line-height: 0.86;
+      line-height: 0.88;
       color: #1f3440;
+      animation: fadeRise 0.6s ease-out 0.25s both;
     }
 
     .subheadline {
       max-width: 550px;
-      margin-top: 30px;
-      color: rgba(29, 51, 66, 0.82);
+      margin-top: 38px;
+      color: rgba(29, 51, 66, 0.68);
       font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(1.45rem, 2.2vw, 2rem);
+      font-size: clamp(1.35rem, 2vw, 1.75rem);
       font-weight: 500;
-      line-height: 1.28;
+      line-height: 1.32;
+      animation: fadeRise 0.6s ease-out 0.4s both;
     }
 
     .hero-actions {
       display: flex;
       align-items: center;
       gap: 20px;
-      margin-top: 42px;
+      margin-top: 52px;
+      animation: fadeRise 0.6s ease-out 0.55s both;
     }
 
     .cta {
@@ -234,13 +249,14 @@
       font-size: 16px;
       font-weight: 500;
       text-decoration: none;
-      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+      transition: background 220ms ease, border-color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
     }
 
     .cta:hover {
       background: #1c303b;
       border-color: #1c303b;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(36, 63, 81, 0.15);
     }
 
     @media (max-width: 860px) {
@@ -319,16 +335,16 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span>Blue Grid</span>
       </a>
-      <a class="nav-link" href="dashboard.html">City Atlas</a>
+      <a class="nav-link" href="dashboard.html">Live Infrastructure Map</a>
     </header>
 
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">Kitchener Water Archive</p>
+        <p class="eyebrow">Water Infrastructure Intelligence</p>
         <h1 id="hero-title">The city remembers every water main break.</h1>
-        <p class="subheadline">Blue Grid learns from that history to help cities act before the next failure happens.</p>
+        <p class="subheadline">Predict failures before they happen.</p>
         <div class="hero-actions">
-          <a class="cta" href="dashboard.html">View The City &rarr;</a>
+          <a class="cta" href="dashboard.html">Explore the Atlas &rarr;</a>
         </div>
       </div>
     </section>

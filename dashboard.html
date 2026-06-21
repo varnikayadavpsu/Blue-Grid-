@@ -136,7 +136,7 @@
       position: fixed;
       left: 20px;
       top: 108px;
-      width: 320px;
+      width: 280px;
       background: var(--panel);
       backdrop-filter: blur(16px);
       border-radius: var(--radius);
@@ -259,7 +259,7 @@
     /* Map Container */
     #map-container {
       position: fixed;
-      left: 360px;
+      left: 320px;
       top: 108px;
       right: 24px;
       bottom: 24px;
@@ -271,7 +271,7 @@
     }
 
     #map-container.with-detail {
-      right: 420px;
+      right: 380px;
     }
 
     #map {
@@ -285,9 +285,9 @@
     /* Detail Panel (right) */
     #detail-panel {
       position: fixed;
-      right: -400px;
+      right: -360px;
       top: 108px;
-      width: 380px;
+      width: 340px;
       background: var(--panel);
       backdrop-filter: blur(16px);
       border-radius: var(--radius);
@@ -346,7 +346,40 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .intelligence-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-bottom: 24px;
+    }
+
+    .intel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .intel-badge-label {
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .intel-badge-value {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--accent-strong);
     }
 
     .detail-section {
@@ -969,11 +1002,16 @@
     <div class="detail-risk-score mono" id="detail-risk-score">—</div>
     <div class="detail-risk-label">Risk Score</div>
 
+    <!-- Intelligence Badges -->
+    <div class="intelligence-badges" id="intelligence-badges">
+      <!-- Populated by JavaScript -->
+    </div>
+
     <div class="detail-section">
       <div class="detail-section-title">Risk Factors</div>
       <div class="factor-bar">
         <div class="factor-label">
-          <span>Age</span>
+          <span>🕒 Age</span>
           <span class="mono" id="factor-age-val">—</span>
         </div>
         <div class="factor-track">
@@ -982,7 +1020,7 @@
       </div>
       <div class="factor-bar">
         <div class="factor-label">
-          <span>Material Fragility</span>
+          <span>⚙️ Material</span>
           <span class="mono" id="factor-material-val">—</span>
         </div>
         <div class="factor-track">
@@ -991,7 +1029,7 @@
       </div>
       <div class="factor-bar">
         <div class="factor-label">
-          <span>Break History</span>
+          <span>💥 Break History</span>
           <span class="mono" id="factor-history-val">—</span>
         </div>
         <div class="factor-track">
@@ -1000,7 +1038,7 @@
       </div>
       <div class="factor-bar">
         <div class="factor-label">
-          <span>Flood Exposure</span>
+          <span>🌊 Flood Exposure</span>
           <span class="mono" id="factor-flood-val">—</span>
         </div>
         <div class="factor-track">
@@ -1629,6 +1667,12 @@
         similarBreaksContent.innerHTML = '';
       }
 
+      // Hide intelligence badges for zones (only for pipes)
+      const badgesContainer = document.getElementById('intelligence-badges');
+      if (badgesContainer) {
+        badgesContainer.style.display = 'none';
+      }
+
       // Get neighborhood name
       const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
 
@@ -2152,12 +2196,54 @@
 
       const detailZoneId = document.getElementById('detail-zone-id');
       if (detailZoneId) {
-        detailZoneId.innerHTML = `${pipe.id}<div class="zone-coord-subtitle">Age: ${pipe.age} yrs${diameterStr}</div>`;
+        detailZoneId.innerHTML = `${pipe.id}`;
       }
       const detailRiskScore = document.getElementById('detail-risk-score');
       if (detailRiskScore) {
         detailRiskScore.textContent = pipe.risk;
         detailRiskScore.style.color = getRiskColor(pipe.risk);
+      }
+
+      // Populate intelligence badges with real data
+      const badgesContainer = document.getElementById('intelligence-badges');
+      if (badgesContainer) {
+        let badgesHTML = '';
+
+        // Install year (calculated from age)
+        if (pipe.age && pipe.age > 0) {
+          const currentYear = new Date().getFullYear();
+          const installYear = currentYear - pipe.age;
+          badgesHTML += `
+            <div class="intel-badge">
+              <span class="intel-badge-label">Installed</span>
+              <span class="intel-badge-value">${installYear}</span>
+            </div>
+          `;
+        }
+
+        // Material
+        if (pipe.material) {
+          badgesHTML += `
+            <div class="intel-badge">
+              <span class="intel-badge-label">Material</span>
+              <span class="intel-badge-value">${pipe.material}</span>
+            </div>
+          `;
+        }
+
+        // Diameter
+        if (pipe.diameter) {
+          badgesHTML += `
+            <div class="intel-badge">
+              <span class="intel-badge-label">Diameter</span>
+              <span class="intel-badge-value">${pipe.diameter}mm</span>
+            </div>
+          `;
+        }
+
+        badgesContainer.innerHTML = badgesHTML;
+        // Show/hide badges container based on whether we have any badges
+        badgesContainer.style.display = badgesHTML ? 'flex' : 'none';
       }
 
       // For pipes, we don't have full factor breakdown, so estimate from risk and age
