@@ -63,7 +63,7 @@ print("="*70)
 print("Status: Running")
 print("Port: 5002")
 print("Endpoint: http://localhost:5002/api/action-plan")
-print("Model: claude-3-haiku-20240307 (low cost)")
+print("Model: claude-haiku-4-5-20251001 (low cost)")
 print("API Key: Loaded from config.json ✓")
 print("="*70 + "\n")
 
@@ -73,7 +73,7 @@ def health():
     return jsonify({
         'status': 'ok',
         'service': 'anthropic-proxy',
-        'model': 'claude-3-haiku-20240307'
+        'model': 'claude-haiku-4-5-20251001'
     })
 
 @app.route('/api/action-plan', methods=['POST'])
@@ -123,7 +123,7 @@ Be specific, operational, and concise. Each action should be clear and actionabl
 
         # Call Claude API (using Haiku for low cost)
         message = client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024,
             messages=[
                 {
@@ -142,7 +142,7 @@ Be specific, operational, and concise. Each action should be clear and actionabl
             'success': True,
             'plan': response_text,
             'zone': zone_name,
-            'model': 'claude-3-haiku-20240307'
+            'model': 'claude-haiku-4-5-20251001'
         })
 
     except anthropic.APIError as e:

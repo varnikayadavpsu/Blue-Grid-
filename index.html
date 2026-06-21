@@ -944,6 +944,19 @@
       }
     }
 
+    // Convert markdown to HTML (lightweight inline formatter)
+    function markdownToHtml(text) {
+      return text
+        // Bold: **text** or __text__
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.+?)__/g, '<strong>$1</strong>')
+        // Italic: *text* or _text_ (but not ** or __)
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+        .replace(/(?<!_)_(?!_)(.+?)(?<!_)_(?!_)/g, '<em>$1</em>')
+        // Code: `text`
+        .replace(/`(.+?)`/g, '<code style="background: rgba(29, 158, 117, 0.2); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 0.9em;">$1</code>');
+    }
+
     // Render action plan with formatting
     function renderActionPlan(planText, container) {
       // Split into sections based on headers
@@ -955,14 +968,22 @@
         const trimmed = line.trim();
         if (!trimmed) continue;
 
-        // Check for section headers
+        // Check for section headers (IMMEDIATE, 72-HOUR, LONG-TERM)
         if (trimmed.match(/^(IMMEDIATE|72-HOUR|LONG-TERM)/i) ||
             trimmed.match(/^\*\*(IMMEDIATE|72-HOUR|LONG-TERM)/i) ||
             trimmed.match(/^#{1,3}\s*(IMMEDIATE|72-HOUR|LONG-TERM)/i)) {
           if (currentSection) sections.push(currentSection);
-          currentSection = { title: trimmed.replace(/^#+\s*|\*\*/g, '').replace(/:/g, ''), items: [] };
+          // Clean up the title: remove markdown symbols and colons
+          const cleanTitle = trimmed
+            .replace(/^#+\s*/, '')    // Remove ##
+            .replace(/\*\*/g, '')      // Remove **
+            .replace(/:/g, '')         // Remove colons
+            .trim();
+          currentSection = { title: cleanTitle, items: [] };
         } else if (currentSection && (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.match(/^\d+\./))) {
-          currentSection.items.push(trimmed.replace(/^[-•]\s*|\d+\.\s*/, ''));
+          // List item - remove bullet/number and add
+          const itemText = trimmed.replace(/^[-•]\s*|\d+\.\s*/, '');
+          currentSection.items.push(itemText);
         } else if (currentSection && trimmed.length > 0) {
           // Continuation of previous item or new item
           if (currentSection.items.length > 0) {
@@ -974,19 +995,21 @@
       }
       if (currentSection) sections.push(currentSection);
 
-      // Render sections
+      // Render sections with proper spacing and formatted markdown
       let html = '';
       for (const section of sections) {
         html += `<div class="plan-section">`;
-        html += `<div class="plan-section-title">${section.title}</div>`;
+        html += `<div class="plan-section-title">${markdownToHtml(section.title)}</div>`;
         html += `<ul>`;
         for (const item of section.items) {
-          html += `<li>${item}</li>`;
+          // Convert markdown formatting in each item
+          html += `<li>${markdownToHtml(item)}</li>`;
         }
         html += `</ul></div>`;
       }
 
-      container.innerHTML = html || planText;
+      // Fallback if no sections found
+      container.innerHTML = html || `<div style="white-space: pre-wrap;">${markdownToHtml(planText)}</div>`;
     }
 
     // Fetch similar breaks from Redis
