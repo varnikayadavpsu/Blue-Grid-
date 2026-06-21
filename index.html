@@ -770,7 +770,7 @@
       </div>
     </div>
 
-    <div class="detail-section">
+    <div class="detail-section" id="zone-stats-section">
       <div class="detail-section-title">Zone Statistics</div>
       <div class="detail-stat">
         <span class="detail-stat-label">Historical Breaks</span>
@@ -787,9 +787,19 @@
       Generate Action Plan
     </button>
 
+    <button id="explain-pipe-btn" class="action-plan-button" style="margin-top: 12px; background: #4a6958;">
+      <span class="action-plan-icon">💡</span>
+      Explain This Pipe
+    </button>
+
     <div id="action-plan-output" style="display: none; margin-top: 20px;">
       <div class="detail-section-title">72-Hour Action Plan</div>
       <div id="action-plan-content"></div>
+    </div>
+
+    <div id="explanation-output" style="display: none; margin-top: 20px;">
+      <div class="detail-section-title">Risk Explanation</div>
+      <div id="explanation-content"></div>
     </div>
 
     <div id="similar-breaks-section" style="display: none; margin-top: 20px;">
@@ -957,18 +967,11 @@
       errorEl.style.display = 'block';
     }
 
-    // Generate action plan using Claude API
+    // Generate action plan using Claude API via proxy
     async function generateActionPlan(zone) {
       const btn = document.getElementById('action-plan-btn');
       const outputDiv = document.getElementById('action-plan-output');
       const contentDiv = document.getElementById('action-plan-content');
-
-      // Check for API key
-      if (!config || !config.anthropicApiKey || config.anthropicApiKey === 'YOUR_ANTHROPIC_API_KEY_HERE') {
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ API key not configured. Please add your Anthropic API key to config.json</div>`;
-        outputDiv.style.display = 'block';
-        return;
-      }
 
       // Show loading state
       btn.disabled = true;
@@ -980,55 +983,41 @@
       try {
         const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
 
-        // Prepare the prompt
-        const prompt = `You are a municipal water infrastructure operations expert. Generate a detailed 72-hour operational action plan for the following high-risk water infrastructure zone:
-
-Zone: ${neighborhood} (${zone.id})
-Risk Score: ${zone.risk}/100
-Age Factor: ${zone.factors.age}
-Material Fragility: ${zone.factors.material}
-Break History: ${zone.factors.break_history}
-Historical Breaks: ${zone.breaks}
-Pipe Segments: ${zone.segments}
-
-Generate a structured action plan with THREE sections:
-1. IMMEDIATE ACTIONS (0-24 hours) - urgent inspections, crew deployment, monitoring
-2. 72-HOUR ACTIONS (24-72 hours) - detailed assessments, preventive measures, resource allocation
-3. LONG-TERM ACTIONS (1-6 months) - infrastructure upgrades, replacement planning, monitoring systems
-
-Format each section as a bulleted list with specific, actionable items. Be concise and operational.`;
-
-        // Call Claude API
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        // Call proxy API
+        const response = await fetch('http://localhost:5002/api/action-plan', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': config.anthropicApiKey,
-            'anthropic-version': '2023-06-01'
           },
           body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 1024,
-            messages: [{
-              role: 'user',
-              content: prompt
-            }]
+            zone_id: zone.id,
+            neighborhood: neighborhood,
+            risk: zone.risk,
+            age_factor: zone.factors.age,
+            material_fragility: zone.factors.material,
+            break_history: zone.factors.break_history,
+            flood_factor: zone.factors.flood,
+            breaks: zone.breaks,
+            segments: zone.segments
           })
         });
 
         if (!response.ok) {
-          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
-        const planText = data.content[0].text;
 
-        // Parse and render the plan
-        renderActionPlan(planText, contentDiv);
+        if (data.success) {
+          // Parse and render the plan
+          renderActionPlan(data.plan, contentDiv);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
@@ -1148,21 +1137,135 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       }
     }
 
+    // Explain pipe/zone risk using Claude API via proxy
+    async function explainPipe(item, isPipe = true) {
+      const btn = document.getElementById('explain-pipe-btn');
+      const outputDiv = document.getElementById('explanation-output');
+      const contentDiv = document.getElementById('explanation-content');
+
+      // Show loading state
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.innerHTML = '<span class="action-plan-icon">💡</span> Explaining...';
+      contentDiv.innerHTML = '<div style="text-align: center; color: #63736b; padding: 20px;">Analyzing risk factors...</div>';
+      outputDiv.style.display = 'block';
+
+      try {
+        let requestBody;
+
+        if (isPipe) {
+          const materialStr = item.material ? item.material : 'Unknown';
+          const diameterStr = item.diameter ? `${item.diameter}mm` : 'Unknown';
+          const ageFactor = Math.min(Math.round(item.age * 0.8), 35);
+          const materialFactor = Math.round(item.risk * 0.25);
+          const historyFactor = Math.round(item.risk * 0.25);
+          const floodFactor = 20;
+
+          requestBody = {
+            pipe_id: item.id,
+            risk: item.risk,
+            age: item.age,
+            material: materialStr,
+            diameter: diameterStr,
+            age_factor: ageFactor,
+            material_fragility: materialFactor,
+            break_history: historyFactor,
+            flood_factor: floodFactor,
+            breaks: 0,
+            segments: 1
+          };
+        } else {
+          const neighborhood = getNeighborhoodName(item.lat, item.lon);
+          requestBody = {
+            zone_id: item.id,
+            neighborhood: neighborhood,
+            risk: item.risk,
+            age_factor: item.factors.age,
+            material_fragility: item.factors.material,
+            break_history: item.factors.break_history,
+            flood_factor: item.factors.flood,
+            breaks: item.breaks,
+            segments: item.segments
+          };
+        }
+
+        // Call proxy API
+        const response = await fetch('http://localhost:5002/api/explain-pipe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Render the explanation
+          contentDiv.innerHTML = `<div style="line-height: 1.7;">${data.explanation.replace(/\n/g, '<br>')}</div>`;
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+
+      } catch (error) {
+        console.error('Explanation generation failed:', error);
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate explanation: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
+      } finally {
+        // Reset button
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = '<span class="action-plan-icon">💡</span> Explain This Pipe';
+      }
+    }
+
     // Close detail panel
     function closeDetail() {
-      document.getElementById('detail-panel').classList.remove('open');
-      document.getElementById('map-container').classList.remove('with-detail');
-      document.getElementById('map-container').classList.add('expanded');
+      const detailPanel = document.getElementById('detail-panel');
+      if (detailPanel) {
+        detailPanel.classList.remove('open');
+      }
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) {
+        mapContainer.classList.remove('with-detail');
+        mapContainer.classList.add('expanded');
+      }
 
       // Hide action plan output
-      document.getElementById('action-plan-output').style.display = 'none';
-      document.getElementById('action-plan-content').innerHTML = '';
+      const actionPlanOutput = document.getElementById('action-plan-output');
+      if (actionPlanOutput) {
+        actionPlanOutput.style.display = 'none';
+      }
+      const actionPlanContent = document.getElementById('action-plan-content');
+      if (actionPlanContent) {
+        actionPlanContent.innerHTML = '';
+      }
+
+      // Hide explanation output
+      const explanationOutput = document.getElementById('explanation-output');
+      if (explanationOutput) {
+        explanationOutput.style.display = 'none';
+      }
+      const explanationContent = document.getElementById('explanation-content');
+      if (explanationContent) {
+        explanationContent.innerHTML = '';
+      }
 
       // Hide similar breaks section
-      document.getElementById('similar-breaks-section').style.display = 'none';
-      document.getElementById('similar-breaks-content').innerHTML = '';
+      const similarBreaksSection = document.getElementById('similar-breaks-section');
+      if (similarBreaksSection) {
+        similarBreaksSection.style.display = 'none';
+      }
+      const similarBreaksContent = document.getElementById('similar-breaks-content');
+      if (similarBreaksContent) {
+        similarBreaksContent.innerHTML = '';
+      }
 
       selectedZone = null;
+      selectedPipe = null;
 
       // Reset marker sizes and remove highlights
       Object.values(markers).forEach(m => {
@@ -1174,20 +1277,59 @@ Format each section as a bulleted list with specific, actionable items. Be conci
           if (element) element.classList.remove('zone-highlight');
         }
       });
+
+      // Reset pipe highlights
+      Object.values(pipeLines).forEach(line => {
+        line.setStyle({ weight: line.originalWeight, opacity: line.originalOpacity });
+        if (line._path) {
+          line._path.classList.remove('pipe-hover');
+        }
+      });
     }
 
     // Show zone detail
     function showZoneDetail(zone) {
       selectedZone = zone;
 
+      // CLEAR PREVIOUS RESULTS (issue #3 fix) - with null checks
+      const actionPlanOutput = document.getElementById('action-plan-output');
+      if (actionPlanOutput) {
+        actionPlanOutput.style.display = 'none';
+      }
+      const actionPlanContent = document.getElementById('action-plan-content');
+      if (actionPlanContent) {
+        actionPlanContent.innerHTML = '';
+      }
+      const pipeExplanationOutput = document.getElementById('pipe-explanation-output');
+      if (pipeExplanationOutput) {
+        pipeExplanationOutput.style.display = 'none';
+      }
+      const pipeExplanationContent = document.getElementById('pipe-explanation-content');
+      if (pipeExplanationContent) {
+        pipeExplanationContent.innerHTML = '';
+      }
+      const similarBreaksSection = document.getElementById('similar-breaks-section');
+      if (similarBreaksSection) {
+        similarBreaksSection.style.display = 'none';
+      }
+      const similarBreaksContent = document.getElementById('similar-breaks-content');
+      if (similarBreaksContent) {
+        similarBreaksContent.innerHTML = '';
+      }
+
       // Get neighborhood name
       const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
 
       // Update detail panel with neighborhood name
       const zoneIdEl = document.getElementById('detail-zone-id');
-      zoneIdEl.innerHTML = `${neighborhood}<div class="zone-coord-subtitle">${zone.id}</div>`;
-      document.getElementById('detail-risk-score').textContent = zone.risk;
-      document.getElementById('detail-risk-score').style.color = getRiskColor(zone.risk);
+      if (zoneIdEl) {
+        zoneIdEl.innerHTML = `${neighborhood}<div class="zone-coord-subtitle">${zone.id}</div>`;
+      }
+      const detailRiskScore = document.getElementById('detail-risk-score');
+      if (detailRiskScore) {
+        detailRiskScore.textContent = zone.risk;
+        detailRiskScore.style.color = getRiskColor(zone.risk);
+      }
 
       // Rescale factors so they sum to the risk score (for visual clarity)
       // The raw factors don't sum to risk anymore after percentile rescaling,
@@ -1218,10 +1360,14 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       }
 
       // Update factor values
-      document.getElementById('factor-age-val').textContent = scaledAge;
-      document.getElementById('factor-material-val').textContent = scaledMaterial;
-      document.getElementById('factor-history-val').textContent = scaledHistory;
-      document.getElementById('factor-flood-val').textContent = scaledFlood;
+      const factorAgeVal = document.getElementById('factor-age-val');
+      if (factorAgeVal) factorAgeVal.textContent = scaledAge;
+      const factorMaterialVal = document.getElementById('factor-material-val');
+      if (factorMaterialVal) factorMaterialVal.textContent = scaledMaterial;
+      const factorHistoryVal = document.getElementById('factor-history-val');
+      if (factorHistoryVal) factorHistoryVal.textContent = scaledHistory;
+      const factorFloodVal = document.getElementById('factor-flood-val');
+      if (factorFloodVal) factorFloodVal.textContent = scaledFlood;
 
       // Verify sum (for debugging)
       const verifySum = scaledAge + scaledMaterial + scaledHistory + scaledFlood;
@@ -1231,20 +1377,36 @@ Format each section as a bulleted list with specific, actionable items. Be conci
 
       // Animate factor bars (normalized to 100 for width)
       setTimeout(() => {
-        document.getElementById('factor-age-fill').style.width = (scaledAge) + '%';
-        document.getElementById('factor-material-fill').style.width = (scaledMaterial) + '%';
-        document.getElementById('factor-history-fill').style.width = (scaledHistory) + '%';
-        document.getElementById('factor-flood-fill').style.width = (scaledFlood) + '%';
+        const factorAgeFill = document.getElementById('factor-age-fill');
+        if (factorAgeFill) factorAgeFill.style.width = (scaledAge) + '%';
+        const factorMaterialFill = document.getElementById('factor-material-fill');
+        if (factorMaterialFill) factorMaterialFill.style.width = (scaledMaterial) + '%';
+        const factorHistoryFill = document.getElementById('factor-history-fill');
+        if (factorHistoryFill) factorHistoryFill.style.width = (scaledHistory) + '%';
+        const factorFloodFill = document.getElementById('factor-flood-fill');
+        if (factorFloodFill) factorFloodFill.style.width = (scaledFlood) + '%';
       }, 50);
 
-      // Update stats
-      document.getElementById('detail-breaks').textContent = zone.breaks;
-      document.getElementById('detail-segments').textContent = zone.segments;
+      // Update stats and show stats section for zones (they have real data)
+      const zoneStatsSection = document.getElementById('zone-stats-section');
+      if (zoneStatsSection) {
+        zoneStatsSection.style.display = 'block';
+      }
+      const detailBreaks = document.getElementById('detail-breaks');
+      if (detailBreaks) detailBreaks.textContent = zone.breaks;
+      const detailSegments = document.getElementById('detail-segments');
+      if (detailSegments) detailSegments.textContent = zone.segments;
 
       // Show panel
-      document.getElementById('detail-panel').classList.add('open');
-      document.getElementById('map-container').classList.remove('expanded');
-      document.getElementById('map-container').classList.add('with-detail');
+      const detailPanel = document.getElementById('detail-panel');
+      if (detailPanel) {
+        detailPanel.classList.add('open');
+      }
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) {
+        mapContainer.classList.remove('expanded');
+        mapContainer.classList.add('with-detail');
+      }
 
       // Highlight selected marker with glow effect
       Object.values(markers).forEach(m => {
@@ -1449,7 +1611,9 @@ Format each section as a bulleted list with specific, actionable items. Be conci
             weight: this.originalWeight + 2,
             opacity: 1
           });
-          this._path.classList.add('pipe-hover');
+          if (this._path) {
+            this._path.classList.add('pipe-hover');
+          }
         });
 
         polyline.on('mouseout', function(e) {
@@ -1459,7 +1623,9 @@ Format each section as a bulleted list with specific, actionable items. Be conci
               weight: this.originalWeight,
               opacity: this.originalOpacity
             });
-            this._path.classList.remove('pipe-hover');
+            if (this._path) {
+              this._path.classList.remove('pipe-hover');
+            }
           }
         });
 
@@ -1511,10 +1677,16 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         priorityList.appendChild(item);
       });
 
-      // Add click handler for action plan button
+      // Add click handlers for action plan and explain buttons
       document.getElementById('action-plan-btn').onclick = () => {
         if (selectedPipe) {
           generatePipeActionPlan(selectedPipe);
+        }
+      };
+
+      document.getElementById('explain-pipe-btn').onclick = () => {
+        if (selectedPipe) {
+          explainPipe(selectedPipe, true);
         }
       };
     }
@@ -1618,10 +1790,16 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         priorityList.appendChild(item);
       });
 
-      // Add click handler for action plan button
+      // Add click handlers for action plan and explain buttons
       document.getElementById('action-plan-btn').onclick = () => {
         if (selectedZone) {
           generateActionPlan(selectedZone);
+        }
+      };
+
+      document.getElementById('explain-pipe-btn').onclick = () => {
+        if (selectedZone) {
+          explainPipe(selectedZone, false);
         }
       };
     }
@@ -1630,13 +1808,45 @@ Format each section as a bulleted list with specific, actionable items. Be conci
     function showPipeDetail(pipe) {
       selectedPipe = pipe;
 
+      // CLEAR PREVIOUS RESULTS (issue #3 fix) - with null checks
+      const actionPlanOutput = document.getElementById('action-plan-output');
+      if (actionPlanOutput) {
+        actionPlanOutput.style.display = 'none';
+      }
+      const actionPlanContent = document.getElementById('action-plan-content');
+      if (actionPlanContent) {
+        actionPlanContent.innerHTML = '';
+      }
+      const pipeExplanationOutput = document.getElementById('pipe-explanation-output');
+      if (pipeExplanationOutput) {
+        pipeExplanationOutput.style.display = 'none';
+      }
+      const pipeExplanationContent = document.getElementById('pipe-explanation-content');
+      if (pipeExplanationContent) {
+        pipeExplanationContent.innerHTML = '';
+      }
+      const similarBreaksSection = document.getElementById('similar-breaks-section');
+      if (similarBreaksSection) {
+        similarBreaksSection.style.display = 'none';
+      }
+      const similarBreaksContent = document.getElementById('similar-breaks-content');
+      if (similarBreaksContent) {
+        similarBreaksContent.innerHTML = '';
+      }
+
       // Update detail panel
       const materialStr = pipe.material ? ` (${pipe.material})` : '';
       const diameterStr = pipe.diameter ? ` • Ø${pipe.diameter}mm` : '';
 
-      document.getElementById('detail-zone-id').innerHTML = `${pipe.id}<div class="zone-coord-subtitle">Age: ${pipe.age} yrs${diameterStr}</div>`;
-      document.getElementById('detail-risk-score').textContent = pipe.risk;
-      document.getElementById('detail-risk-score').style.color = getRiskColor(pipe.risk);
+      const detailZoneId = document.getElementById('detail-zone-id');
+      if (detailZoneId) {
+        detailZoneId.innerHTML = `${pipe.id}<div class="zone-coord-subtitle">Age: ${pipe.age} yrs${diameterStr}</div>`;
+      }
+      const detailRiskScore = document.getElementById('detail-risk-score');
+      if (detailRiskScore) {
+        detailRiskScore.textContent = pipe.risk;
+        detailRiskScore.style.color = getRiskColor(pipe.risk);
+      }
 
       // For pipes, we don't have full factor breakdown, so estimate from risk and age
       // This is simplified - just for visual display
@@ -1645,37 +1855,57 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       const historyFactor = Math.round(pipe.risk * 0.25);
       const floodFactor = 20;
 
-      document.getElementById('factor-age-val').textContent = ageFactor;
-      document.getElementById('factor-material-val').textContent = materialFactor;
-      document.getElementById('factor-history-val').textContent = historyFactor;
-      document.getElementById('factor-flood-val').textContent = floodFactor;
+      const factorAgeVal = document.getElementById('factor-age-val');
+      if (factorAgeVal) factorAgeVal.textContent = ageFactor;
+      const factorMaterialVal = document.getElementById('factor-material-val');
+      if (factorMaterialVal) factorMaterialVal.textContent = materialFactor;
+      const factorHistoryVal = document.getElementById('factor-history-val');
+      if (factorHistoryVal) factorHistoryVal.textContent = historyFactor;
+      const factorFloodVal = document.getElementById('factor-flood-val');
+      if (factorFloodVal) factorFloodVal.textContent = floodFactor;
 
       // Animate factor bars
       setTimeout(() => {
-        document.getElementById('factor-age-fill').style.width = ageFactor + '%';
-        document.getElementById('factor-material-fill').style.width = materialFactor + '%';
-        document.getElementById('factor-history-fill').style.width = historyFactor + '%';
-        document.getElementById('factor-flood-fill').style.width = floodFactor + '%';
+        const factorAgeFill = document.getElementById('factor-age-fill');
+        if (factorAgeFill) factorAgeFill.style.width = ageFactor + '%';
+        const factorMaterialFill = document.getElementById('factor-material-fill');
+        if (factorMaterialFill) factorMaterialFill.style.width = materialFactor + '%';
+        const factorHistoryFill = document.getElementById('factor-history-fill');
+        if (factorHistoryFill) factorHistoryFill.style.width = historyFactor + '%';
+        const factorFloodFill = document.getElementById('factor-flood-fill');
+        if (factorFloodFill) factorFloodFill.style.width = floodFactor + '%';
       }, 50);
 
-      // Update stats (for pipes, we don't have segments/breaks data)
-      document.getElementById('detail-breaks').textContent = '—';
-      document.getElementById('detail-segments').textContent = '1';
+      // HIDE ZONE STATS FOR PIPES (issue #2 fix - no misleading data)
+      const zoneStatsSection = document.getElementById('zone-stats-section');
+      if (zoneStatsSection) {
+        zoneStatsSection.style.display = 'none';
+      }
 
       // Show panel
-      document.getElementById('detail-panel').classList.add('open');
-      document.getElementById('map-container').classList.remove('expanded');
-      document.getElementById('map-container').classList.add('with-detail');
+      const detailPanel = document.getElementById('detail-panel');
+      if (detailPanel) {
+        detailPanel.classList.add('open');
+      }
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) {
+        mapContainer.classList.remove('expanded');
+        mapContainer.classList.add('with-detail');
+      }
 
       // Highlight selected pipe
       Object.values(pipeLines).forEach(line => {
         const p = line.options.pipeData;
         if (p.id === pipe.id) {
           line.setStyle({ weight: line.originalWeight + 3, opacity: 1 });
-          line._path.classList.add('pipe-hover');
+          if (line._path) {
+            line._path.classList.add('pipe-hover');
+          }
         } else {
           line.setStyle({ weight: line.originalWeight, opacity: line.originalOpacity });
-          line._path.classList.remove('pipe-hover');
+          if (line._path) {
+            line._path.classList.remove('pipe-hover');
+          }
         }
       });
 
@@ -1695,18 +1925,11 @@ Format each section as a bulleted list with specific, actionable items. Be conci
       document.getElementById('similar-breaks-section').style.display = 'none';
     }
 
-    // Generate action plan for a pipe
+    // Generate action plan for a pipe via proxy
     async function generatePipeActionPlan(pipe) {
       const btn = document.getElementById('action-plan-btn');
       const outputDiv = document.getElementById('action-plan-output');
       const contentDiv = document.getElementById('action-plan-content');
-
-      // Check for API key
-      if (!config || !config.anthropicApiKey || config.anthropicApiKey === 'YOUR_ANTHROPIC_API_KEY_HERE') {
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ API key not configured. Please add your Anthropic API key to config.json</div>`;
-        outputDiv.style.display = 'block';
-        return;
-      }
 
       // Show loading state
       btn.disabled = true;
@@ -1719,53 +1942,49 @@ Format each section as a bulleted list with specific, actionable items. Be conci
         const materialStr = pipe.material ? pipe.material : 'Unknown';
         const diameterStr = pipe.diameter ? `${pipe.diameter}mm` : 'Unknown';
 
-        // Prepare the prompt
-        const prompt = `You are a municipal water infrastructure operations expert. Generate a detailed 72-hour operational action plan for the following high-risk water main pipe:
+        // Estimate factors for pipe (simplified calculation for display)
+        const ageFactor = Math.min(Math.round(pipe.age * 0.8), 35);
+        const materialFactor = Math.round(pipe.risk * 0.25);
+        const historyFactor = Math.round(pipe.risk * 0.25);
+        const floodFactor = 20;
 
-Pipe ID: ${pipe.id}
-Risk Score: ${pipe.risk}/100
-Age: ${pipe.age} years
-Material: ${materialStr}
-Diameter: ${diameterStr}
-
-Generate a structured action plan with THREE sections:
-1. IMMEDIATE ACTIONS (0-24 hours) - urgent inspections, crew deployment, monitoring
-2. 72-HOUR ACTIONS (24-72 hours) - detailed assessments, preventive measures, resource allocation
-3. LONG-TERM ACTIONS (1-6 months) - infrastructure upgrades, replacement planning, monitoring systems
-
-Format each section as a bulleted list with specific, actionable items. Be concise and operational.`;
-
-        // Call Claude API
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        // Call proxy API
+        const response = await fetch('http://localhost:5002/api/action-plan', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': config.anthropicApiKey,
-            'anthropic-version': '2023-06-01'
           },
           body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 1024,
-            messages: [{
-              role: 'user',
-              content: prompt
-            }]
+            pipe_id: pipe.id,
+            risk: pipe.risk,
+            age: pipe.age,
+            material: materialStr,
+            diameter: diameterStr,
+            age_factor: ageFactor,
+            material_fragility: materialFactor,
+            break_history: historyFactor,
+            flood_factor: floodFactor,
+            breaks: 0,
+            segments: 1
           })
         });
 
         if (!response.ok) {
-          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
-        const planText = data.content[0].text;
 
-        // Parse and render the plan
-        renderActionPlan(planText, contentDiv);
+        if (data.success) {
+          // Parse and render the plan
+          renderActionPlan(data.plan, contentDiv);
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
       } finally {
         // Reset button
         btn.disabled = false;

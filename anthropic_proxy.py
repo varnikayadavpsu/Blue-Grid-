@@ -62,7 +62,9 @@ print("ANTHROPIC API PROXY SERVER")
 print("="*70)
 print("Status: Running")
 print("Port: 5002")
-print("Endpoint: http://localhost:5002/api/action-plan")
+print("Endpoints:")
+print("  - http://localhost:5002/api/action-plan")
+print("  - http://localhost:5002/api/explain-pipe")
 print("Model: claude-haiku-4-5-20251001 (low cost)")
 print("API Key: Loaded from config.json ✓")
 print("="*70 + "\n")
@@ -98,28 +100,20 @@ def generate_action_plan():
         print(f"Generating action plan for: {zone_name} (Risk: {risk})")
 
         # Build prompt
-        prompt = f"""You are a municipal water infrastructure operations expert. Generate a concise, actionable 72-hour operational plan for this high-risk water infrastructure zone:
+        prompt = f"""Water ops engineer reviewing zone {zone_name} (Risk {risk}/100, {breaks} historical breaks).
 
-Zone: {zone_name} ({zone_id})
-Risk Score: {risk}/100
-Infrastructure Age Factor: {age}
-Material Fragility Factor: {material}
-Break History Factor: {break_history}
-Historical Breaks: {breaks}
-Pipe Segments: {segments}
+Write a quick 72-hour action plan. Three sections, 2-3 short bullets each. Plain language like you're briefing the crew lead:
 
-Generate a structured action plan with exactly THREE sections:
+IMMEDIATE (0-24h):
+- [what to inspect/monitor now]
 
-**IMMEDIATE ACTIONS (0-24 hours)**
-- [3-4 specific urgent actions with bullet points]
+72-HOUR (24-72h):
+- [follow-up work]
 
-**72-HOUR ACTIONS (24-72 hours)**
-- [3-4 specific medium-term actions with bullet points]
+LONG-TERM (1-6mo):
+- [planning/upgrades]
 
-**LONG-TERM ACTIONS (1-6 months)**
-- [3-4 specific strategic actions with bullet points]
-
-Be specific, operational, and concise. Each action should be clear and actionable for city crews."""
+No preamble. Direct, scannable bullets only."""
 
         # Call Claude API (using Haiku for low cost)
         message = client.messages.create(
@@ -142,6 +136,82 @@ Be specific, operational, and concise. Each action should be clear and actionabl
             'success': True,
             'plan': response_text,
             'zone': zone_name,
+            'model': 'claude-haiku-4-5-20251001'
+        })
+
+    except anthropic.APIError as e:
+        print(f"✗ Anthropic API error: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'API error: {str(e)}'
+        }), 500
+
+    except Exception as e:
+        print(f"✗ Error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/explain-pipe', methods=['POST'])
+def explain_pipe():
+    """Explain why a pipe/zone is at risk using Claude"""
+    try:
+        # Get pipe/zone data from request
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        # Extract data (works for both pipes and zones)
+        pipe_id = data.get('pipe_id') or data.get('zone_id', 'Unknown')
+        neighborhood = data.get('neighborhood', '')
+        risk = data.get('risk', 0)
+        age = data.get('age', 0)
+        material = data.get('material', 'Unknown')
+        diameter = data.get('diameter', 'Unknown')
+        age_factor = data.get('age_factor', 0)
+        material_fragility = data.get('material_fragility', 0)
+        break_history = data.get('break_history', 0)
+        flood_factor = data.get('flood_factor', 0)
+        breaks = data.get('breaks', 0)
+        segments = data.get('segments', 0)
+
+        print(f"Explaining risk for: {pipe_id} (Risk: {risk})")
+
+        # Build prompt - focus on WHY this pipe is at risk
+        if neighborhood:
+            # Zone explanation
+            prompt = f"""Zone {neighborhood}: risk {risk}/100. Top factors: age={age_factor}, material={material_fragility}, history={break_history}, {breaks} past breaks.
+
+Write 2-3 short sentences explaining why this zone is at risk. Sound like a city engineer writing notes, not an AI. Focus on the main risk drivers. No fluff."""
+        else:
+            # Pipe explanation
+            prompt = f"""Pipe {pipe_id}: {age}yr {material}, risk {risk}/100. Main factors: age={age_factor}, material={material_fragility}, history={break_history}.
+
+Write 2-3 short sentences explaining why this pipe is at risk. Sound like a city engineer writing notes, not an AI. Focus on the top risk factor and the material/age combo. No fluff."""
+
+        # Call Claude API (using Haiku for low cost)
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=512,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        # Extract response text
+        response_text = message.content[0].text
+
+        print(f"✓ Explanation generated ({len(response_text)} chars)")
+
+        return jsonify({
+            'success': True,
+            'explanation': response_text,
+            'pipe_id': pipe_id,
             'model': 'claude-haiku-4-5-20251001'
         })
 

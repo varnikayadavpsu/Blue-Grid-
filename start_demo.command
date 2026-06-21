@@ -42,22 +42,13 @@ cleanup() {
 # Trap Ctrl+C and other termination signals
 trap cleanup SIGINT SIGTERM EXIT
 
-# Check if ports are already in use
-check_port() {
-    if lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null 2>&1 ; then
-        echo -e "${RED}✗ Port $1 is already in use${NC}"
-        echo "  Run: lsof -ti:$1 | xargs kill -9"
-        echo "  Or use ./stop_demo.sh to kill all services"
-        return 1
-    fi
-    return 0
-}
-
-echo -e "${CYAN}Checking ports...${NC}"
-check_port 8000 || exit 1
-check_port 5001 || exit 1
-check_port 5002 || exit 1
-echo -e "${GREEN}✓ All ports available${NC}"
+# Kill any processes on our ports before starting
+echo -e "${CYAN}Clearing ports 8000, 5001, 5002...${NC}"
+lsof -ti:8000 | xargs kill -9 2>/dev/null
+lsof -ti:5001 | xargs kill -9 2>/dev/null
+lsof -ti:5002 | xargs kill -9 2>/dev/null
+sleep 1
+echo -e "${GREEN}✓ Ports cleared${NC}"
 echo ""
 
 # Start HTTP server for dashboard
