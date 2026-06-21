@@ -131,8 +131,8 @@
       font-weight: bold;
     }
 
-    /* Priority Panel (left) */
-    #priority-panel {
+    /* Left Sidebar Container */
+    #left-sidebar {
       position: fixed;
       left: 20px;
       top: 108px;
@@ -141,11 +141,73 @@
       backdrop-filter: blur(16px);
       border-radius: var(--radius);
       border: 1px solid var(--line);
-      padding: 24px;
       z-index: 999;
       box-shadow: 0 18px 42px rgba(82, 68, 43, 0.16);
-      max-height: calc(100vh - 148px);
+      max-height: calc(100vh - 132px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Sidebar Tabs */
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--line-strong);
+      background: rgba(241, 235, 216, 0.5);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .sidebar-tab {
+      flex: 1;
+      padding: 14px 12px;
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      text-align: center;
+    }
+
+    .sidebar-tab:hover {
+      color: var(--text);
+      background: rgba(147, 188, 169, 0.08);
+    }
+
+    .sidebar-tab.active {
+      color: var(--accent-strong);
+      background: var(--panel);
+    }
+
+    .sidebar-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #93bca9;
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Sidebar Panel Content */
+    .sidebar-panel-content {
+      flex: 1;
       overflow-y: auto;
+      padding: 24px;
+      display: none;
+    }
+
+    .sidebar-panel-content.active {
+      display: block;
+    }
+
+    /* Priority Panel (left) */
+    #priority-panel {
+      /* Positioning now handled by parent container */
     }
 
     .panel-header {
@@ -158,6 +220,7 @@
       margin-bottom: 18px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--line-strong);
+      display: none; /* Hidden since tabs serve as headers */
     }
 
     .priority-item {
@@ -669,6 +732,72 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(189, 214, 200, 0.7);
     }
+
+    /* Recent Breaks Panel */
+    #recent-breaks-panel {
+      /* Positioning now handled by parent container */
+    }
+
+    .recent-breaks-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .recent-breaks-title {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent-strong);
+      display: none; /* Hidden since tab serves as title */
+    }
+
+    .browserbase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(147, 188, 169, 0.2);
+      color: #4a7c68;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(147, 188, 169, 0.3);
+    }
+
+    .break-item {
+      background: var(--panel-soft);
+      border-left: 3px solid #93bca9;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: var(--radius-small);
+      font-size: 13px;
+    }
+
+    .break-street {
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .break-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .break-meta-label {
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -693,10 +822,28 @@
     </div>
   </div>
 
-  <!-- Priority Panel (Left) -->
-  <div id="priority-panel">
-    <div class="panel-header">Inspection Priority</div>
-    <div id="priority-list"></div>
+  <!-- Left Sidebar with Tabs -->
+  <div id="left-sidebar">
+    <!-- Tab Buttons -->
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" onclick="switchSidebarTab('priority')">Inspection Priority</button>
+      <button class="sidebar-tab" onclick="switchSidebarTab('breaks')">Recent Breaks</button>
+    </div>
+
+    <!-- Priority Panel Content -->
+    <div id="priority-panel" class="sidebar-panel-content active">
+      <div class="panel-header">Inspection Priority</div>
+      <div id="priority-list"></div>
+    </div>
+
+    <!-- Recent Breaks Panel Content -->
+    <div id="recent-breaks-panel" class="sidebar-panel-content">
+      <div class="recent-breaks-header">
+        <div class="recent-breaks-title">Recent Breaks</div>
+        <div class="browserbase-badge">⚡ Live via Browserbase</div>
+      </div>
+      <div id="recent-breaks-list"></div>
+    </div>
   </div>
 
   <!-- Map Container -->
@@ -2023,10 +2170,92 @@
       }
     }
 
+    // Switch between sidebar tabs
+    function switchSidebarTab(tabName) {
+      // Remove active class from all tabs and panels
+      document.querySelectorAll('.sidebar-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.sidebar-panel-content').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      // Add active class to selected tab and panel
+      if (tabName === 'priority') {
+        document.querySelector('.sidebar-tab:nth-child(1)').classList.add('active');
+        document.getElementById('priority-panel').classList.add('active');
+      } else if (tabName === 'breaks') {
+        document.querySelector('.sidebar-tab:nth-child(2)').classList.add('active');
+        document.getElementById('recent-breaks-panel').classList.add('active');
+      }
+    }
+
+    // Load and display recent breaks from Browserbase
+    async function loadRecentBreaks() {
+      const listContainer = document.getElementById('recent-breaks-list');
+
+      try {
+        const response = await fetch('latest_breaks.json');
+
+        if (!response.ok) {
+          // If file doesn't exist, show a message
+          listContainer.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">No recent breaks data available. Run browserbase_agent.py to fetch data.</div>';
+          return;
+        }
+
+        const data = await response.json();
+        const records = data.records || [];
+
+        if (records.length === 0) {
+          listContainer.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">No records found</div>';
+          return;
+        }
+
+        // Display records (limit to first 5)
+        let html = '';
+        records.slice(0, 5).forEach(record => {
+          // Convert Unix timestamp to readable date
+          let dateStr = '—';
+          const incidentDate = record.INCIDENT_DATE || record.DATE;
+          if (incidentDate) {
+            const date = new Date(incidentDate);
+            if (!isNaN(date.getTime())) {
+              dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+          }
+
+          const street = record.STREET || record.LOCATION || '—';
+          const breakType = record.BREAK_TYPE || record.TYPE || '—';
+          const status = record.STATUS || '—';
+          const material = record.ASSET_MATERIAL || record.MATERIAL || '—';
+
+          html += `
+            <div class="break-item">
+              <div class="break-street">${street}</div>
+              <div class="break-meta">
+                <div><span class="break-meta-label">Date:</span> ${dateStr}</div>
+                <div><span class="break-meta-label">Type:</span> ${breakType}</div>
+                <div><span class="break-meta-label">Status:</span> ${status}</div>
+                <div><span class="break-meta-label">Material:</span> ${material}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        listContainer.innerHTML = html;
+        console.log('✓ Loaded recent breaks from Browserbase:', records.length, 'records');
+
+      } catch (error) {
+        console.warn('Could not load recent breaks:', error);
+        listContainer.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Unable to load recent breaks</div>';
+      }
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
       await loadConfig();
       loadData();
+      loadRecentBreaks();
     });
   </script>
 </body>
