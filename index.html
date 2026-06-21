@@ -842,6 +842,36 @@
       }
     }
 
+    // Smart API fetch: try localhost first (for local dev), fall back to Render
+    async function fetchAPI(endpoint, options = {}) {
+      const LOCALHOST_URL = 'http://localhost:5002';
+      const RENDER_URL = 'https://blue-grid.onrender.com';
+
+      // Try localhost first with short timeout (for local development)
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2s timeout
+
+        const response = await fetch(`${LOCALHOST_URL}${endpoint}`, {
+          ...options,
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          console.log('✓ Using local API');
+          return response;
+        }
+      } catch (error) {
+        console.log('Local API not available, using Render deployment...');
+      }
+
+      // Fall back to Render URL
+      console.log('✓ Using Render API');
+      return fetch(`${RENDER_URL}${endpoint}`, options);
+    }
+
     // Risk color mapping
     function getRiskColor(risk) {
       if (risk >= 81) return '#d24f4b'; // Critical - hydrant red
@@ -983,8 +1013,8 @@
       try {
         const neighborhood = getNeighborhoodName(zone.lat, zone.lon);
 
-        // Call proxy API
-        const response = await fetch('http://localhost:5002/api/action-plan', {
+        // Call proxy API (tries localhost, falls back to Render)
+        const response = await fetchAPI('/api/action-plan', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1003,7 +1033,7 @@
         });
 
         if (!response.ok) {
-          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
+          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -1017,7 +1047,7 @@
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
@@ -1189,8 +1219,8 @@
           };
         }
 
-        // Call proxy API
-        const response = await fetch('http://localhost:5002/api/explain-pipe', {
+        // Call proxy API (tries localhost, falls back to Render)
+        const response = await fetchAPI('/api/explain-pipe', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1199,7 +1229,7 @@
         });
 
         if (!response.ok) {
-          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
+          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -1213,7 +1243,7 @@
 
       } catch (error) {
         console.error('Explanation generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate explanation: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate explanation: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
@@ -1948,8 +1978,8 @@
         const historyFactor = Math.round(pipe.risk * 0.25);
         const floodFactor = 20;
 
-        // Call proxy API
-        const response = await fetch('http://localhost:5002/api/action-plan', {
+        // Call proxy API (tries localhost, falls back to Render)
+        const response = await fetchAPI('/api/action-plan', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1970,7 +2000,7 @@
         });
 
         if (!response.ok) {
-          throw new Error(`Proxy API request failed: ${response.status} ${response.statusText}`);
+          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -1984,7 +2014,7 @@
 
       } catch (error) {
         console.error('Action plan generation failed:', error);
-        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}<br><br>Make sure the proxy is running on http://localhost:5002</div>`;
+        contentDiv.innerHTML = `<div class="plan-error">⚠️ Failed to generate action plan: ${error.message}</div>`;
       } finally {
         // Reset button
         btn.disabled = false;
