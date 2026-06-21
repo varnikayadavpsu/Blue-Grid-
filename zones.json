@@ -1,0 +1,1937 @@
+{
+  "city": "Kitchener, ON",
+  "zones": [
+    {
+      "id": "43.45_-80.46",
+      "lat": 43.45067,
+      "lon": -80.4609,
+      "risk": 95,
+      "factors": {
+        "age": 60,
+        "material": 100,
+        "break_history": 15,
+        "flood": 20
+      },
+      "breaks": 29,
+      "segments": 23
+    },
+    {
+      "id": "43.46_-80.46",
+      "lat": 43.4588,
+      "lon": -80.4587,
+      "risk": 95,
+      "factors": {
+        "age": 60,
+        "material": 100,
+        "break_history": 15,
+        "flood": 20
+      },
+      "breaks": 14,
+      "segments": 11
+    },
+    {
+      "id": "43.47_-80.46",
+      "lat": 43.46587,
+      "lon": -80.45954,
+      "risk": 94,
+      "factors": {
+        "age": 60,
+        "material": 100,
+        "break_history": 12,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 2
+    },
+    {
+      "id": "43.47_-80.49",
+      "lat": 43.46711,
+      "lon": -80.49147,
+      "risk": 94,
+      "factors": {
+        "age": 60,
+        "material": 100,
+        "break_history": 12,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 2
+    },
+    {
+      "id": "43.42_-80.45",
+      "lat": 43.42416,
+      "lon": -80.45092,
+      "risk": 93,
+      "factors": {
+        "age": 60,
+        "material": 100,
+        "break_history": 11,
+        "flood": 20
+      },
+      "breaks": 7,
+      "segments": 8
+    },
+    {
+      "id": "43.44_-80.45",
+      "lat": 43.43896,
+      "lon": -80.45268,
+      "risk": 93,
+      "factors": {
+        "age": 60,
+        "material": 90,
+        "break_history": 15,
+        "flood": 20
+      },
+      "breaks": 20,
+      "segments": 16
+    },
+    {
+      "id": "43.45_-80.45",
+      "lat": 43.45063,
+      "lon": -80.4495,
+      "risk": 92,
+      "factors": {
+        "age": 60,
+        "material": 92,
+        "break_history": 13,
+        "flood": 20
+      },
+      "breaks": 20,
+      "segments": 19
+    },
+    {
+      "id": "43.46_-80.47",
+      "lat": 43.45898,
+      "lon": -80.46886,
+      "risk": 92,
+      "factors": {
+        "age": 60,
+        "material": 85,
+        "break_history": 19,
+        "flood": 20
+      },
+      "breaks": 14,
+      "segments": 9
+    },
+    {
+      "id": "43.43_-80.45",
+      "lat": 43.42966,
+      "lon": -80.44841,
+      "risk": 91,
+      "factors": {
+        "age": 60,
+        "material": 91,
+        "break_history": 10,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 6
+    },
+    {
+      "id": "43.48_-80.46",
+      "lat": 43.48353,
+      "lon": -80.46295,
+      "risk": 91,
+      "factors": {
+        "age": 60,
+        "material": 95,
+        "break_history": 5,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 11
+    },
+    {
+      "id": "43.43_-80.43",
+      "lat": 43.43268,
+      "lon": -80.42842,
+      "risk": 90,
+      "factors": {
+        "age": 60,
+        "material": 90,
+        "break_history": 7,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 5
+    },
+    {
+      "id": "43.43_-80.5",
+      "lat": 43.42972,
+      "lon": -80.49988,
+      "risk": 90,
+      "factors": {
+        "age": 60,
+        "material": 86,
+        "break_history": 13,
+        "flood": 20
+      },
+      "breaks": 16,
+      "segments": 15
+    },
+    {
+      "id": "43.48_-80.49",
+      "lat": 43.47801,
+      "lon": -80.48779,
+      "risk": 90,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 50,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 1
+    },
+    {
+      "id": "43.43_-80.46",
+      "lat": 43.43031,
+      "lon": -80.45877,
+      "risk": 89,
+      "factors": {
+        "age": 60,
+        "material": 77,
+        "break_history": 6,
+        "flood": 20
+      },
+      "breaks": 13,
+      "segments": 24
+    },
+    {
+      "id": "43.43_-80.51",
+      "lat": 43.4301,
+      "lon": -80.51056,
+      "risk": 89,
+      "factors": {
+        "age": 60,
+        "material": 70,
+        "break_history": 19,
+        "flood": 20
+      },
+      "breaks": 14,
+      "segments": 9
+    },
+    {
+      "id": "43.43_-80.44",
+      "lat": 43.4327,
+      "lon": -80.43873,
+      "risk": 88,
+      "factors": {
+        "age": 60,
+        "material": 72,
+        "break_history": 4,
+        "flood": 20
+      },
+      "breaks": 7,
+      "segments": 18
+    },
+    {
+      "id": "43.46_-80.52",
+      "lat": 43.45609,
+      "lon": -80.51604,
+      "risk": 88,
+      "factors": {
+        "age": 60,
+        "material": 73,
+        "break_history": 4,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 3
+    },
+    {
+      "id": "43.42_-80.46",
+      "lat": 43.42313,
+      "lon": -80.4629,
+      "risk": 87,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 25,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 1
+    },
+    {
+      "id": "43.43_-80.47",
+      "lat": 43.43232,
+      "lon": -80.47214,
+      "risk": 87,
+      "factors": {
+        "age": 60,
+        "material": 68,
+        "break_history": 8,
+        "flood": 20
+      },
+      "breaks": 11,
+      "segments": 16
+    },
+    {
+      "id": "43.42_-80.51",
+      "lat": 43.41822,
+      "lon": -80.509,
+      "risk": 86,
+      "factors": {
+        "age": 60,
+        "material": 66,
+        "break_history": 5,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 12
+    },
+    {
+      "id": "43.43_-80.48",
+      "lat": 43.42806,
+      "lon": -80.47984,
+      "risk": 86,
+      "factors": {
+        "age": 60,
+        "material": 71,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 7
+    },
+    {
+      "id": "43.47_-80.48",
+      "lat": 43.46906,
+      "lon": -80.48116,
+      "risk": 85,
+      "factors": {
+        "age": 60,
+        "material": 65,
+        "break_history": 4,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 10
+    },
+    {
+      "id": "43.48_-80.47",
+      "lat": 43.48269,
+      "lon": -80.47003,
+      "risk": 85,
+      "factors": {
+        "age": 60,
+        "material": 65,
+        "break_history": 5,
+        "flood": 20
+      },
+      "breaks": 8,
+      "segments": 19
+    },
+    {
+      "id": "43.44_-80.46",
+      "lat": 43.4398,
+      "lon": -80.45993,
+      "risk": 84,
+      "factors": {
+        "age": 60,
+        "material": 56,
+        "break_history": 12,
+        "flood": 20
+      },
+      "breaks": 23,
+      "segments": 23
+    },
+    {
+      "id": "43.46_-80.44",
+      "lat": 43.46004,
+      "lon": -80.4412,
+      "risk": 84,
+      "factors": {
+        "age": 60,
+        "material": 58,
+        "break_history": 10,
+        "flood": 20
+      },
+      "breaks": 31,
+      "segments": 36
+    },
+    {
+      "id": "43.44_-80.51",
+      "lat": 43.43888,
+      "lon": -80.51272,
+      "risk": 83,
+      "factors": {
+        "age": 60,
+        "material": 64,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 16
+    },
+    {
+      "id": "43.46_-80.45",
+      "lat": 43.46104,
+      "lon": -80.45137,
+      "risk": 83,
+      "factors": {
+        "age": 60,
+        "material": 61,
+        "break_history": 5,
+        "flood": 20
+      },
+      "breaks": 7,
+      "segments": 15
+    },
+    {
+      "id": "43.45_-80.44",
+      "lat": 43.44907,
+      "lon": -80.43903,
+      "risk": 82,
+      "factors": {
+        "age": 60,
+        "material": 52,
+        "break_history": 13,
+        "flood": 20
+      },
+      "breaks": 19,
+      "segments": 18
+    },
+    {
+      "id": "43.47_-80.47",
+      "lat": 43.47251,
+      "lon": -80.47417,
+      "risk": 82,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 12,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 1
+    },
+    {
+      "id": "43.43_-80.49",
+      "lat": 43.42843,
+      "lon": -80.48925,
+      "risk": 81,
+      "factors": {
+        "age": 60,
+        "material": 57,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 14
+    },
+    {
+      "id": "43.44_-80.52",
+      "lat": 43.43548,
+      "lon": -80.5171,
+      "risk": 81,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 8,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 3
+    },
+    {
+      "id": "43.41_-80.44",
+      "lat": 43.40885,
+      "lon": -80.44303,
+      "risk": 80,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 6,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 2
+    },
+    {
+      "id": "43.43_-80.52",
+      "lat": 43.43157,
+      "lon": -80.52044,
+      "risk": 80,
+      "factors": {
+        "age": 60,
+        "material": 52,
+        "break_history": 4,
+        "flood": 20
+      },
+      "breaks": 9,
+      "segments": 23
+    },
+    {
+      "id": "43.45_-80.43",
+      "lat": 43.45072,
+      "lon": -80.4309,
+      "risk": 79,
+      "factors": {
+        "age": 60,
+        "material": 54,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 22
+    },
+    {
+      "id": "43.46_-80.48",
+      "lat": 43.45867,
+      "lon": -80.48201,
+      "risk": 79,
+      "factors": {
+        "age": 60,
+        "material": 53,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 25
+    },
+    {
+      "id": "43.43_-80.42",
+      "lat": 43.42592,
+      "lon": -80.41838,
+      "risk": 78,
+      "factors": {
+        "age": 60,
+        "material": 46,
+        "break_history": 9,
+        "flood": 20
+      },
+      "breaks": 6,
+      "segments": 8
+    },
+    {
+      "id": "43.44_-80.53",
+      "lat": 43.43983,
+      "lon": -80.52989,
+      "risk": 78,
+      "factors": {
+        "age": 60,
+        "material": 46,
+        "break_history": 8,
+        "flood": 20
+      },
+      "breaks": 12,
+      "segments": 17
+    },
+    {
+      "id": "43.42_-80.5",
+      "lat": 43.42036,
+      "lon": -80.49829,
+      "risk": 77,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 16
+    },
+    {
+      "id": "43.42_-80.53",
+      "lat": 43.41948,
+      "lon": -80.52994,
+      "risk": 77,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 4,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 15
+    },
+    {
+      "id": "43.43_-80.41",
+      "lat": 43.42981,
+      "lon": -80.41403,
+      "risk": 76,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 6
+    },
+    {
+      "id": "43.44_-80.44",
+      "lat": 43.44474,
+      "lon": -80.43952,
+      "risk": 76,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 5
+    },
+    {
+      "id": "43.39_-80.45",
+      "lat": 43.39087,
+      "lon": -80.45165,
+      "risk": 75,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 15
+    },
+    {
+      "id": "43.46_-80.51",
+      "lat": 43.45715,
+      "lon": -80.50822,
+      "risk": 75,
+      "factors": {
+        "age": 60,
+        "material": 46,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 16
+    },
+    {
+      "id": "43.41_-80.39",
+      "lat": 43.40585,
+      "lon": -80.3909,
+      "risk": 74,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 9
+    },
+    {
+      "id": "43.42_-80.54",
+      "lat": 43.41989,
+      "lon": -80.53997,
+      "risk": 74,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 24
+    },
+    {
+      "id": "43.41_-80.54",
+      "lat": 43.41256,
+      "lon": -80.53838,
+      "risk": 73,
+      "factors": {
+        "age": 60,
+        "material": 47,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 13
+    },
+    {
+      "id": "43.42_-80.49",
+      "lat": 43.41537,
+      "lon": -80.4933,
+      "risk": 73,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 2
+    },
+    {
+      "id": "43.44_-80.54",
+      "lat": 43.43749,
+      "lon": -80.54028,
+      "risk": 72,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 8
+    },
+    {
+      "id": "43.4_-80.45",
+      "lat": 43.39656,
+      "lon": -80.4483,
+      "risk": 72,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 7
+    },
+    {
+      "id": "43.43_-80.53",
+      "lat": 43.43067,
+      "lon": -80.53016,
+      "risk": 71,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.4_-80.48",
+      "lat": 43.4013,
+      "lon": -80.47615,
+      "risk": 71,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 5
+    },
+    {
+      "id": "43.38_-80.41",
+      "lat": 43.38432,
+      "lon": -80.41038,
+      "risk": 70,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 4
+    },
+    {
+      "id": "43.42_-80.48",
+      "lat": 43.41901,
+      "lon": -80.47773,
+      "risk": 70,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 5
+    },
+    {
+      "id": "43.42_-80.43",
+      "lat": 43.41541,
+      "lon": -80.42763,
+      "risk": 69,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 4
+    },
+    {
+      "id": "43.4_-80.44",
+      "lat": 43.39512,
+      "lon": -80.44403,
+      "risk": 69,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 4
+    },
+    {
+      "id": "43.41_-80.45",
+      "lat": 43.40824,
+      "lon": -80.44565,
+      "risk": 68,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 1
+    },
+    {
+      "id": "43.4_-80.43",
+      "lat": 43.39769,
+      "lon": -80.42995,
+      "risk": 68,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 10
+    },
+    {
+      "id": "43.42_-80.52",
+      "lat": 43.42204,
+      "lon": -80.52,
+      "risk": 67,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.41_-80.48",
+      "lat": 43.41192,
+      "lon": -80.48012,
+      "risk": 66,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 11
+    },
+    {
+      "id": "43.42_-80.42",
+      "lat": 43.42295,
+      "lon": -80.41844,
+      "risk": 66,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.39_-80.41",
+      "lat": 43.39013,
+      "lon": -80.41053,
+      "risk": 65,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 7
+    },
+    {
+      "id": "43.41_-80.46",
+      "lat": 43.40839,
+      "lon": -80.46002,
+      "risk": 65,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 2
+    },
+    {
+      "id": "43.41_-80.47",
+      "lat": 43.40825,
+      "lon": -80.47434,
+      "risk": 64,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.41_-80.55",
+      "lat": 43.41263,
+      "lon": -80.54817,
+      "risk": 64,
+      "factors": {
+        "age": 60,
+        "material": 50,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 11
+    },
+    {
+      "id": "43.42_-80.47",
+      "lat": 43.41824,
+      "lon": -80.47237,
+      "risk": 63,
+      "factors": {
+        "age": 60,
+        "material": 48,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.45_-80.52",
+      "lat": 43.45112,
+      "lon": -80.51906,
+      "risk": 63,
+      "factors": {
+        "age": 60,
+        "material": 44,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 11,
+      "segments": 44
+    },
+    {
+      "id": "43.48_-80.48",
+      "lat": 43.48033,
+      "lon": -80.48135,
+      "risk": 62,
+      "factors": {
+        "age": 60,
+        "material": 43,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 21
+    },
+    {
+      "id": "43.41_-80.49",
+      "lat": 43.40993,
+      "lon": -80.49099,
+      "risk": 61,
+      "factors": {
+        "age": 60,
+        "material": 46,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 25
+    },
+    {
+      "id": "43.44_-80.48",
+      "lat": 43.43932,
+      "lon": -80.48037,
+      "risk": 61,
+      "factors": {
+        "age": 60,
+        "material": 45,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 23
+    },
+    {
+      "id": "43.39_-80.44",
+      "lat": 43.39075,
+      "lon": -80.44053,
+      "risk": 60,
+      "factors": {
+        "age": 60,
+        "material": 44,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 26
+    },
+    {
+      "id": "43.44_-80.47",
+      "lat": 43.4417,
+      "lon": -80.47089,
+      "risk": 60,
+      "factors": {
+        "age": 60,
+        "material": 39,
+        "break_history": 5,
+        "flood": 20
+      },
+      "breaks": 6,
+      "segments": 13
+    },
+    {
+      "id": "43.43_-80.54",
+      "lat": 43.43257,
+      "lon": -80.5404,
+      "risk": 59,
+      "factors": {
+        "age": 60,
+        "material": 43,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 19
+    },
+    {
+      "id": "43.49_-80.47",
+      "lat": 43.4903,
+      "lon": -80.47025,
+      "risk": 59,
+      "factors": {
+        "age": 60,
+        "material": 44,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 9
+    },
+    {
+      "id": "43.42_-80.55",
+      "lat": 43.4209,
+      "lon": -80.54825,
+      "risk": 58,
+      "factors": {
+        "age": 60,
+        "material": 45,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 19
+    },
+    {
+      "id": "43.41_-80.5",
+      "lat": 43.41063,
+      "lon": -80.49832,
+      "risk": 57,
+      "factors": {
+        "age": 60,
+        "material": 41,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 28
+    },
+    {
+      "id": "43.4_-80.49",
+      "lat": 43.40264,
+      "lon": -80.48986,
+      "risk": 57,
+      "factors": {
+        "age": 60,
+        "material": 44,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 16
+    },
+    {
+      "id": "43.45_-80.47",
+      "lat": 43.45145,
+      "lon": -80.47122,
+      "risk": 56,
+      "factors": {
+        "age": 60,
+        "material": 34,
+        "break_history": 7,
+        "flood": 20
+      },
+      "breaks": 8,
+      "segments": 13
+    },
+    {
+      "id": "43.46_-80.49",
+      "lat": 43.45742,
+      "lon": -80.49046,
+      "risk": 56,
+      "factors": {
+        "age": 60,
+        "material": 40,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 5,
+      "segments": 49
+    },
+    {
+      "id": "43.41_-80.52",
+      "lat": 43.41052,
+      "lon": -80.52091,
+      "risk": 55,
+      "factors": {
+        "age": 60,
+        "material": 38,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 3,
+      "segments": 15
+    },
+    {
+      "id": "43.39_-80.42",
+      "lat": 43.39061,
+      "lon": -80.41925,
+      "risk": 54,
+      "factors": {
+        "age": 60,
+        "material": 41,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 11
+    },
+    {
+      "id": "43.47_-80.44",
+      "lat": 43.46724,
+      "lon": -80.44143,
+      "risk": 54,
+      "factors": {
+        "age": 60,
+        "material": 38,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 15
+    },
+    {
+      "id": "43.39_-80.43",
+      "lat": 43.38985,
+      "lon": -80.43093,
+      "risk": 53,
+      "factors": {
+        "age": 60,
+        "material": 36,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 9
+    },
+    {
+      "id": "43.45_-80.49",
+      "lat": 43.44981,
+      "lon": -80.49027,
+      "risk": 52,
+      "factors": {
+        "age": 60,
+        "material": 32,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 18,
+      "segments": 59
+    },
+    {
+      "id": "43.48_-80.43",
+      "lat": 43.47841,
+      "lon": -80.43003,
+      "risk": 52,
+      "factors": {
+        "age": 60,
+        "material": 37,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 19
+    },
+    {
+      "id": "43.44_-80.49",
+      "lat": 43.44109,
+      "lon": -80.48963,
+      "risk": 51,
+      "factors": {
+        "age": 60,
+        "material": 32,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 11,
+      "segments": 38
+    },
+    {
+      "id": "43.44_-80.5",
+      "lat": 43.43844,
+      "lon": -80.50096,
+      "risk": 51,
+      "factors": {
+        "age": 60,
+        "material": 31,
+        "break_history": 3,
+        "flood": 20
+      },
+      "breaks": 11,
+      "segments": 43
+    },
+    {
+      "id": "43.42_-80.44",
+      "lat": 43.42129,
+      "lon": -80.43968,
+      "risk": 50,
+      "factors": {
+        "age": 60,
+        "material": 35,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 4
+    },
+    {
+      "id": "43.39_-80.46",
+      "lat": 43.39163,
+      "lon": -80.4594,
+      "risk": 49,
+      "factors": {
+        "age": 60,
+        "material": 34,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 25
+    },
+    {
+      "id": "43.46_-80.5",
+      "lat": 43.45752,
+      "lon": -80.50116,
+      "risk": 49,
+      "factors": {
+        "age": 60,
+        "material": 31,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 22
+    },
+    {
+      "id": "43.41_-80.42",
+      "lat": 43.40943,
+      "lon": -80.41964,
+      "risk": 48,
+      "factors": {
+        "age": 60,
+        "material": 33,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 11
+    },
+    {
+      "id": "43.44_-80.55",
+      "lat": 43.43892,
+      "lon": -80.55127,
+      "risk": 47,
+      "factors": {
+        "age": 60,
+        "material": 32,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 7
+    },
+    {
+      "id": "43.45_-80.42",
+      "lat": 43.45338,
+      "lon": -80.41927,
+      "risk": 47,
+      "factors": {
+        "age": 60,
+        "material": 33,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 18
+    },
+    {
+      "id": "43.45_-80.51",
+      "lat": 43.44933,
+      "lon": -80.51089,
+      "risk": 46,
+      "factors": {
+        "age": 60,
+        "material": 28,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 37
+    },
+    {
+      "id": "43.44_-80.43",
+      "lat": 43.43967,
+      "lon": -80.42974,
+      "risk": 45,
+      "factors": {
+        "age": 60,
+        "material": 29,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 15
+    },
+    {
+      "id": "43.4_-80.39",
+      "lat": 43.4042,
+      "lon": -80.38621,
+      "risk": 45,
+      "factors": {
+        "age": 60,
+        "material": 30,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.4_-80.46",
+      "lat": 43.39771,
+      "lon": -80.4605,
+      "risk": 44,
+      "factors": {
+        "age": 60,
+        "material": 29,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 16
+    },
+    {
+      "id": "43.45_-80.5",
+      "lat": 43.45003,
+      "lon": -80.49964,
+      "risk": 43,
+      "factors": {
+        "age": 60,
+        "material": 26,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 10,
+      "segments": 51
+    },
+    {
+      "id": "43.4_-80.42",
+      "lat": 43.40198,
+      "lon": -80.42018,
+      "risk": 43,
+      "factors": {
+        "age": 60,
+        "material": 26,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 13
+    },
+    {
+      "id": "43.45_-80.48",
+      "lat": 43.44966,
+      "lon": -80.47991,
+      "risk": 42,
+      "factors": {
+        "age": 60,
+        "material": 24,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 35
+    },
+    {
+      "id": "43.38_-80.45",
+      "lat": 43.37998,
+      "lon": -80.44753,
+      "risk": 41,
+      "factors": {
+        "age": 60,
+        "material": 23,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 9
+    },
+    {
+      "id": "43.41_-80.53",
+      "lat": 43.4092,
+      "lon": -80.52934,
+      "risk": 41,
+      "factors": {
+        "age": 60,
+        "material": 23,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 1,
+      "segments": 10
+    },
+    {
+      "id": "43.43_-80.55",
+      "lat": 43.43014,
+      "lon": -80.55039,
+      "risk": 40,
+      "factors": {
+        "age": 60,
+        "material": 23,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 19
+    },
+    {
+      "id": "43.44_-80.41",
+      "lat": 43.44061,
+      "lon": -80.41269,
+      "risk": 39,
+      "factors": {
+        "age": 60,
+        "material": 21,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 2,
+      "segments": 31
+    },
+    {
+      "id": "43.44_-80.42",
+      "lat": 43.44077,
+      "lon": -80.41974,
+      "risk": 38,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 2,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 21
+    },
+    {
+      "id": "43.46_-80.43",
+      "lat": 43.46152,
+      "lon": -80.4303,
+      "risk": 38,
+      "factors": {
+        "age": 60,
+        "material": 22,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 15
+    },
+    {
+      "id": "43.4_-80.52",
+      "lat": 43.40151,
+      "lon": -80.52027,
+      "risk": 37,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 1,
+        "flood": 20
+      },
+      "breaks": 4,
+      "segments": 28
+    },
+    {
+      "id": "43.39_-80.49",
+      "lat": 43.38806,
+      "lon": -80.48972,
+      "risk": 36,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 7
+    },
+    {
+      "id": "43.38_-80.48",
+      "lat": 43.38414,
+      "lon": -80.47998,
+      "risk": 35,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 12
+    },
+    {
+      "id": "43.38_-80.49",
+      "lat": 43.38338,
+      "lon": -80.48616,
+      "risk": 35,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 7
+    },
+    {
+      "id": "43.38_-80.47",
+      "lat": 43.38316,
+      "lon": -80.47123,
+      "risk": 34,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.38_-80.46",
+      "lat": 43.38336,
+      "lon": -80.45687,
+      "risk": 33,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 4
+    },
+    {
+      "id": "43.38_-80.44",
+      "lat": 43.37859,
+      "lon": -80.43872,
+      "risk": 32,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 21
+    },
+    {
+      "id": "43.38_-80.42",
+      "lat": 43.37937,
+      "lon": -80.42152,
+      "risk": 31,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 21
+    },
+    {
+      "id": "43.38_-80.43",
+      "lat": 43.37859,
+      "lon": -80.43049,
+      "risk": 31,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 19
+    },
+    {
+      "id": "43.37_-80.44",
+      "lat": 43.37275,
+      "lon": -80.4388,
+      "risk": 30,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 20
+    },
+    {
+      "id": "43.37_-80.43",
+      "lat": 43.37497,
+      "lon": -80.42843,
+      "risk": 29,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 8
+    },
+    {
+      "id": "43.39_-80.48",
+      "lat": 43.38902,
+      "lon": -80.48122,
+      "risk": 28,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 23
+    },
+    {
+      "id": "43.5_-80.48",
+      "lat": 43.4966,
+      "lon": -80.47754,
+      "risk": 27,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 30
+    },
+    {
+      "id": "43.39_-80.5",
+      "lat": 43.38532,
+      "lon": -80.49535,
+      "risk": 26,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 1
+    },
+    {
+      "id": "43.45_-80.53",
+      "lat": 43.45233,
+      "lon": -80.52564,
+      "risk": 25,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.4_-80.51",
+      "lat": 43.40298,
+      "lon": -80.50998,
+      "risk": 24,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 19
+    },
+    {
+      "id": "43.4_-80.53",
+      "lat": 43.40096,
+      "lon": -80.52752,
+      "risk": 24,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 11
+    },
+    {
+      "id": "43.4_-80.5",
+      "lat": 43.40335,
+      "lon": -80.50137,
+      "risk": 23,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 13
+    },
+    {
+      "id": "43.4_-80.41",
+      "lat": 43.40287,
+      "lon": -80.41274,
+      "risk": 22,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 14
+    },
+    {
+      "id": "43.49_-80.48",
+      "lat": 43.49406,
+      "lon": -80.47818,
+      "risk": 21,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 9
+    },
+    {
+      "id": "43.48_-80.44",
+      "lat": 43.47642,
+      "lon": -80.43711,
+      "risk": 20,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.46_-80.42",
+      "lat": 43.46055,
+      "lon": -80.4211,
+      "risk": 18,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.46_-80.41",
+      "lat": 43.45511,
+      "lon": -80.40792,
+      "risk": 17,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.45_-80.41",
+      "lat": 43.45197,
+      "lon": -80.40893,
+      "risk": 16,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 40
+    },
+    {
+      "id": "43.45_-80.4",
+      "lat": 43.45291,
+      "lon": -80.40405,
+      "risk": 15,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 9
+    },
+    {
+      "id": "43.5_-80.47",
+      "lat": 43.49753,
+      "lon": -80.47304,
+      "risk": 14,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 38
+    },
+    {
+      "id": "43.41_-80.51",
+      "lat": 43.40846,
+      "lon": -80.50982,
+      "risk": 12,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 17
+    },
+    {
+      "id": "43.41_-80.41",
+      "lat": 43.40592,
+      "lon": -80.41068,
+      "risk": 11,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 5
+    },
+    {
+      "id": "43.41_-80.4",
+      "lat": 43.41064,
+      "lon": -80.40093,
+      "risk": 10,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 3
+    },
+    {
+      "id": "43.37_-80.42",
+      "lat": 43.37475,
+      "lon": -80.42299,
+      "risk": 8,
+      "factors": {
+        "age": 60,
+        "material": 20,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 1
+    },
+    {
+      "id": "43.39_-80.47",
+      "lat": 43.38811,
+      "lon": -80.47156,
+      "risk": 6,
+      "factors": {
+        "age": 60,
+        "material": 18,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 19
+    },
+    {
+      "id": "43.43_-80.56",
+      "lat": 43.43027,
+      "lon": -80.56058,
+      "risk": 4,
+      "factors": {
+        "age": 60,
+        "material": 16,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 6
+    },
+    {
+      "id": "43.48_-80.42",
+      "lat": 43.47966,
+      "lon": -80.42183,
+      "risk": 0,
+      "factors": {
+        "age": 60,
+        "material": 15,
+        "break_history": 0,
+        "flood": 20
+      },
+      "breaks": 0,
+      "segments": 1
+    }
+  ]
+}

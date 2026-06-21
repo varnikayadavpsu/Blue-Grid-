@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue Grid — Water Infrastructure Intelligence</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0A1A2F 0%, #0F2841 50%, #12243D 100%);
+      color: #E8F4F8;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Animated Water Network Background */
+    #network-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.4;
+    }
+
+    /* Main Container */
+    .landing-container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 40px;
+    }
+
+    /* Logo/Title */
+    .logo {
+      font-size: 72px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1DD6A1 0%, #0F6E56 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      animation: fadeInDown 1s ease-out;
+      text-shadow: 0 0 40px rgba(29, 214, 161, 0.3);
+    }
+
+    .tagline {
+      font-size: 20px;
+      color: #6B9DAA;
+      margin-bottom: 60px;
+      letter-spacing: 1px;
+      animation: fadeInUp 1s ease-out 0.2s both;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* KPI Stats */
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease-out 0.4s both;
+    }
+
+    .stat-item {
+      background: rgba(15, 30, 50, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(29, 158, 117, 0.3);
+      border-radius: 16px;
+      padding: 30px 40px;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #1DD6A1, transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .stat-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(29, 158, 117, 0.2);
+      border-color: rgba(29, 158, 117, 0.5);
+    }
+
+    .stat-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1DD6A1;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6B9DAA;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    /* CTA Button */
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #1D9E75 0%, #1DD6A1 100%);
+      color: white;
+      text-decoration: none;
+      padding: 20px 50px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 8px 32px rgba(29, 158, 117, 0.4);
+      transition: all 0.3s;
+      animation: fadeInUp 1s ease-out 0.6s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 48px rgba(29, 158, 117, 0.6);
+    }
+
+    .cta-button:active {
+      transform: translateY(0);
+    }
+
+    /* Subtitle */
+    .subtitle {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #4A6B7A;
+      animation: fadeIn 1s ease-out 0.8s both;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: #1DD6A1;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 20s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.3;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 48px;
+      }
+
+      .tagline {
+        font-size: 16px;
+      }
+
+      .stats-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .stat-item {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Network Background -->
+  <canvas id="network-canvas"></canvas>
+
+  <!-- Floating Particles -->
+  <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="particle" style="left: 20%; animation-delay: 4s;"></div>
+  <div class="particle" style="left: 30%; animation-delay: 8s;"></div>
+  <div class="particle" style="left: 40%; animation-delay: 2s;"></div>
+  <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
+  <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+  <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+  <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+  <div class="particle" style="left: 90%; animation-delay: 5s;"></div>
+
+  <!-- Main Content -->
+  <div class="landing-container">
+    <h1 class="logo">BLUE GRID</h1>
+    <p class="tagline">Predicting urban water infrastructure failures before they happen</p>
+
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-value" id="stat-zones">0</div>
+        <div class="stat-label">Zones Monitored</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-breaks">0</div>
+        <div class="stat-label">Historical Breaks Analyzed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-critical">0</div>
+        <div class="stat-label">Critical Zones</div>
+      </div>
+    </div>
+
+    <a href="index.html" class="cta-button">
+      <span>Enter Command Center</span>
+    </a>
+
+    <p class="subtitle">Built with Claude Code • UC Berkeley AI Hackathon 2026</p>
+  </div>
+
+  <script>
+    // Animate counters
+    function animateCounter(id, target, duration) {
+      const element = document.getElementById(id);
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = start;
+
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        element.textContent = Math.round(current).toLocaleString();
+      }, 16);
+    }
+
+    // Start animations after page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        animateCounter('stat-zones', 138, 2000);
+        animateCounter('stat-breaks', 488, 2500);
+        animateCounter('stat-critical', 27, 1800);
+      }, 500);
+    });
+
+    // Animated network background
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Network nodes
+    class Node {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = 2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(29, 214, 161, 0.6)';
+        ctx.fill();
+      }
+    }
+
+    // Create nodes
+    const nodes = [];
+    const nodeCount = 50;
+    for (let i = 0; i < nodeCount; i++) {
+      nodes.push(new Node());
+    }
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update and draw nodes
+      nodes.forEach(node => {
+        node.update();
+        node.draw();
+      });
+
+      // Draw connections
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 150) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = `rgba(29, 214, 161, ${0.15 * (1 - distance / 150)})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Flow animation - small moving circles along lines
+            const flowPos = (Date.now() % 2000) / 2000;
+            const flowX = nodes[i].x + (nodes[j].x - nodes[i].x) * flowPos;
+            const flowY = nodes[i].y + (nodes[j].y - nodes[i].y) * flowPos;
+
+            ctx.beginPath();
+            ctx.arc(flowX, flowY, 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(29, 214, 161, ${0.4 * (1 - distance / 150)})`;
+            ctx.fill();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
