@@ -14,6 +14,7 @@ Port: 5002
 """
 
 import json
+import os
 import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -29,9 +30,17 @@ except ImportError:
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# Load API key from config.json
+# Load API key from environment or config.json
 def load_config():
-    """Load Anthropic API key from config.json"""
+    """Load Anthropic API key from ANTHROPIC_API_KEY env var or config.json"""
+    # First, try environment variable (for cloud deployment)
+    api_key = os.environ.get('ANTHROPIC_API_KEY')
+
+    if api_key:
+        print("API Key: Loaded from ANTHROPIC_API_KEY environment variable ✓")
+        return api_key
+
+    # Fall back to config.json (for local development)
     try:
         with open('config.json', 'r') as f:
             config = json.load(f)
@@ -41,32 +50,41 @@ def load_config():
             print("\n" + "="*70)
             print("ERROR: Anthropic API key not configured")
             print("="*70)
-            print("Please add your API key to config.json:")
+            print("Set ANTHROPIC_API_KEY environment variable OR add to config.json:")
             print("  1. Get key from: https://console.anthropic.com/")
-            print("  2. Edit config.json and replace YOUR_ANTHROPIC_API_KEY_HERE")
+            print("  2. Set: export ANTHROPIC_API_KEY=your-key-here")
+            print("     OR edit config.json and replace YOUR_ANTHROPIC_API_KEY_HERE")
             print("  3. Restart this server")
             print("="*70 + "\n")
             sys.exit(1)
 
+        print("API Key: Loaded from config.json ✓")
         return api_key
     except FileNotFoundError:
-        print("ERROR: config.json not found")
+        print("\n" + "="*70)
+        print("ERROR: No API key found")
+        print("="*70)
+        print("Set ANTHROPIC_API_KEY environment variable:")
+        print("  export ANTHROPIC_API_KEY=your-key-here")
+        print("="*70 + "\n")
         sys.exit(1)
 
 # Initialize Anthropic client
 API_KEY = load_config()
 client = anthropic.Anthropic(api_key=API_KEY)
 
+# Get port from environment variable (for cloud deployment) or default to 5002
+PORT = int(os.environ.get('PORT', 5002))
+
 print("\n" + "="*70)
 print("ANTHROPIC API PROXY SERVER")
 print("="*70)
 print("Status: Running")
-print("Port: 5002")
+print(f"Port: {PORT}")
 print("Endpoints:")
-print("  - http://localhost:5002/api/action-plan")
-print("  - http://localhost:5002/api/explain-pipe")
+print(f"  - http://localhost:{PORT}/api/action-plan")
+print(f"  - http://localhost:{PORT}/api/explain-pipe")
 print("Model: claude-haiku-4-5-20251001 (low cost)")
-print("API Key: Loaded from config.json ✓")
 print("="*70 + "\n")
 
 @app.route('/health', methods=['GET'])
@@ -230,4 +248,5 @@ Write 2-3 short sentences explaining why this pipe is at risk. Sound like a city
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5002, debug=False)
+    # Use 0.0.0.0 to bind to all interfaces (required for cloud deployment)
+    app.run(host='0.0.0.0', port=PORT, debug=False)
